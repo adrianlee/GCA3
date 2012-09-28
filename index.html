@@ -1,7 +1,7 @@
 <script type="text/javascript" src="lib/caat.js"></script>
 <script type="text/javascript" src="main.js"></script>
-
-<div class="sample" id="div_canvas2"></div>
+<script type="text/javascript" src="player.js"></script>
+<div class="sample" id="div_canvas"></div>
 
 <style type="text/css">
     body {
@@ -13,20 +13,37 @@
     (function() {
         // We are not pointing any canvas in the director creation statement,
         // so the director will create a Canvas for us.
-        var director2 = new CAAT.Director().initialize(960, 640);
-
+        var director = new CAAT.Director().initialize(960, 640);
         // add the canvas to the document:
-        document.getElementById('div_canvas2').appendChild(director2.canvas);
+        document.getElementById('div_canvas').appendChild(director.canvas);
 
-        var scene2 = director2.createScene();
+        var scene = director.createScene();
         var circle2 = new CAAT.ShapeActor().
                 setLocation(20, 20).
                 setSize(60, 60).
                 setFillStyle('#ff00ff').
                 setStrokeStyle('#00ff00');
 
-        scene2.addChild(circle2);
 
+        var joystick = new CAAT.ActorContainer().
+            setBounds(30,30,100,100).
+            setFillStyle('#00ffff');
+
+        var subjs = new CAAT.Actor().
+            setBounds(40,40,20,20).
+            setFillStyle('#ffff00')
+
+        joystick.addChild(subjs);
+        joystick.mouseMove = function(e){
+            var child = this.childrenList[0];
+            child.setLocation(
+                e.point.x - child.width/2,
+                e.point.y - child.height/2
+            );
+            this.x = e.point.x;
+            this.y = e.point.y
+        };
+        scene.addChild(joystick);
         CAAT.loop(1);
     })();
 </script>
