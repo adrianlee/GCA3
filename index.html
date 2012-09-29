@@ -21,6 +21,7 @@
 <audio src='sound/1.mp3' preload='auto' id='audio_1'></audio>
 <audio src='sound/2.mp3' preload='auto' id='audio_2'></audio>
 <audio src='sound/3.mp3' preload='auto' id='audio_3'></audio>
+<audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
 
 <script>
     (function() {
@@ -70,7 +71,8 @@
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
                 addAudio("audio_2", document.getElementById('audio_2')).
-                addAudio("audio_3", document.getElementById('audio_3'));
+                addAudio("audio_3", document.getElementById('audio_3')).
+                addAudio("music_1", document.getElementById('music_1'));
 
             var scene = director.createScene();
             scene.setFillStyle( '#000' );
@@ -141,11 +143,6 @@
                             }) ;
             scene.addChild(actor);
 
-
-
-
-        
-
             CAAT.loop(60);
         }
 
@@ -181,7 +178,7 @@
                             if (!collides.length) {
                                 selected.setLocation( nx, ny );
                             } else {
-                                console.log("collision")
+                                console.log("collision");
                             }
                     }
                     prevTime = ottime;
@@ -354,6 +351,9 @@
                 return Math.floor((Math.random()*10)+1);
             }
 
+            director.endSound();
+            // director.audioLoop("music_1");
+
             // Create container for holding enemies
             enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
 
@@ -375,7 +375,7 @@
                         // collision with enemies.
                         director.audioPlay("audio_1");
                         hero.setLocation( scene.width/2-hero.width/2, scene.height/2-hero.height/2 );
-                    
+
                     }
                 },
                 null);
