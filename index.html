@@ -36,7 +36,7 @@
         var entitiesCollision = null;
         var hero = null;
         var world;
-        var wallThickness = 25;
+        var wallThickness = 1;
 
         var joystick = new CAAT.ActorContainer().
             setBounds(30,30,100,100).
@@ -67,6 +67,8 @@
             var director = new CAAT.Director().
                     initialize( 800,500, document.getElementById('experiment-canvas') ).
                     setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
+
+            CAAT.currentDirector = director;
 
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
@@ -380,7 +382,8 @@
                 },
                 null);
 
-            // enemyContainer.destroy();
+            enemyContainer.destroy();
+            // enemyContainer.emptyChildren();
         }
 
         function __createLevel( director, scene, thickness ) {
