@@ -24,6 +24,9 @@
 <audio src='sound/3.mp3' preload='auto' id='audio_3'></audio>
 <audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
 
+<img src='Image/Units/BadGuy.png' preload='auto' id='sprite_1'></img>
+<img src='Image/Units/Fish.png' preload='auto' id='sprite_2'></img>
+
 <script>
     (function() {
         CAAT.DEBUG = 1;
@@ -38,8 +41,10 @@
         var hero = null;
         var world;
         var wallThickness = 5;
+
         var level=1;
         var joystick = true;
+
         var joystickSize = 150;
         var levelpause = false;
         if (joystick) {
@@ -69,12 +74,10 @@
                     child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2);
                     this.joy_x = e.point.x - this.width/2;
                     this.joy_y = e.point.y - this.height/2;
-                    console.log("drag");
                 };
 
             joystick.mouseExit = function(e){
                 if((e.point.x<0 || e.point.x>joystickSize) ||(e.point.y<0 ||e.point.y>joystickSize) ){
-                    console.log(e.point);
                     this.joy_x = 0;
                     this.joy_y = 0;
                     var child = this.childrenList[0];
@@ -104,12 +107,15 @@
 
             scene.setFillStyle( '#000' );
 
+
+            var badguy = new CAAT.SpriteImage().initialize(document.getElementById('sprite_1'), 1, 1);
+
             __createLevel( director, scene );
             __createHero( scene );
-
             __startLevel(director, scene, 1);
             joystick ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
+
 
             var listener = new Box2D.Dynamics.b2ContactListener;
             listener.BeginContact = function(contact){
@@ -121,18 +127,15 @@
                 var b  = contact.GetFixtureB().GetBody();
                 a.SetAngularVelocity(0);
                 b.SetAngularVelocity(0);
+              /*  var angle = Math.atan(a.GetLinearVelocity().y/a.GetLinearVelocity().x);
+                a.SetAngle(angle);
+                angle = Math.atan(b.GetLinearVelocity().y/b.GetLinearVelocity().x);
+                b.SetAngle(angle);*/
                // console.log(contact.GetFixtureA().GetBody());
 
-               /* var a = contact.GetFixtureA().GetBody();
-                var angle = Math.atan(a.GetLinearVelocity().x/a.GetLinearVelocity().y);
-                a.SetTransform(new Box2D.Common.Math.b2Transform(a.GetPosition(),new Box2D.Common.Math.b2Mat22.FromAngle(angle)));
-
-                a = contact.GetFixtureB().GetBody();
-                angle = Math.atan(a.GetLinearVelocity().x/a.GetLinearVelocity().y);
-
-                a.SetTransform(new Box2D.Common.Math.b2Transform(a.GetPosition(),new Box2D.Common.Math.b2Mat22.FromAngle(angle)));*/
             }
             world.SetContactListener(listener); 
+
             window.scene = scene;
 
             /* Game Loop */
@@ -173,7 +176,7 @@
 
                                 var nx= selected.x + joystick.joy_x*(ttime/1100)*10;
                                 var ny= selected.y + joystick.joy_y*(ttime/1100)*10;
-                            
+
                             /**
                              * Test map collision: hero vs map.
                              */
@@ -183,7 +186,7 @@
                             if (!collides.length) {
                                 selected.setLocation( nx, ny );
                             } else {
-                                
+
                                 // Allow frictionless surface when collision with wall.
                                 if (wallThickness >= ny || ny + selected.height >= scene.height-wallThickness) {
                                     // Top & Bottom
@@ -219,7 +222,7 @@
                     polygonType:CAAT.B2DPolygonBody.Type.BOX,
                     bodyDef:    [
                         {x: 0,  y: 0 },
-                        {x: 50,  y: 50 }
+                        {x: 10,  y: 10 }
                     ],
                     userData:   {}
 
@@ -230,12 +233,15 @@
         }
 
         function addEnemies(container,scene,level){
-            for(var i=0;i<20*level;i++){
-                var t = new Bullet(0,Math.random()*500).createBody(world);
+            for(var i=0;i<1*level;i++){
+                // var t = new Bullet(0,Math.random()*500).createBody(world);
+                var t = new Fish(0, Math.random()*500).createBody(world);
+
+                window.t = t;
                 enemyContainer.addChild(t);
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
-                t.setVelocity(hero.x-t.x,hero.y-t.y,10);
+                t.setVelocity(0,hero.y-t.y,2,10);
                 window.t=t;
                 t.addListener({
                     actorLifeCycleEvent : function(actor, event, time) {
