@@ -1,9 +1,10 @@
 <script type="text/javascript" src="lib/caat.js"></script>
 <script type="text/javascript" src="main.js"></script>
 <script type="text/javascript" src="player.js"></script>
-<script type="text/javascript" src="enemies.js"></script>
+
 <script type="text/javascript" src="lib/box2d.js"></script>
 <script type="text/javascript" src="lib/caat-box2d.js"></script>
+<script type="text/javascript" src="enemies.js"></script>
 
 <div class="sample" id="div_canvas"></div>
 
@@ -58,9 +59,7 @@
                 this.joy_y = e.point.y - this.height/2;
             };
 
-        function move(x,y,speed){
 
-        }
 
         function __start() {
 
@@ -75,7 +74,7 @@
                 addAudio("music_1", document.getElementById('music_1'));
 
             var scene = director.createScene();
-            world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,5), true);
+            world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
             world.SetContinuousPhysics(true);
 
             scene.setFillStyle( '#000' );
@@ -131,34 +130,14 @@
                 }
 
 
-            var actor = createBall(
-                            world,
-                            100,
-                            100,
-                            {
-                                radius:         18,
-                                density:        2,
-                                restitution:    .3,
-                                friction:       .2,
-                                tolerance:      .1
-                            }) ;
-            var actor2 = createBall(
-                world,
-                150,
-                100,
-                {
-                    radius:         18,
-                    density:        2,
-                    restitution:    .3,
-                    friction:       .2,
-                    tolerance:      .1
-                }) ;
-            scene.addChild(actor);
-            scene.addChild(actor2);
 
+            var b = new Bullet(200,60);
+            scene.addChild(b.createBody(world,b.params));
+            window.scene = scene;
 
             CAAT.loop(60);
         }
+
 
         function __setJoystick(scene) {
 
@@ -357,19 +336,25 @@
             enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
 
             // Randomly generate enemies based on level, addChild to container
-            for (i = 0; i < 3; i++) {
-                temp = enemy1(0, getRand()*40, 800, getRand()*50, 1000, 3000);
-                enemyContainer.addChild(temp);
-                enemy.push(temp);
-            }
+            for(var i=0;i<3;i++){
+                var t = new Bullet(200+Math.random()*20,100+Math.random()*100);
+                enemyContainer.addChild(t.createBody(world,t.params));
+                enemy.push(t);
+                //Set the direction of the bullets here
+                //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
+                t.setVelocity(5,5);
 
+            }
             // add container to scene
-            scene.addChild(enemyContainer);
+            scene.addChild(enemyContainer,1);
 
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
                     entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
                     var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
+                    for(var i = 0;i<enemyContainer.length;i++){
+                        enemyContainer[i].setVelocity(0,0);
+                    }
                     if ( collide.length ) {
                         // collision with enemies.
                         director.audioPlay("audio_1");
