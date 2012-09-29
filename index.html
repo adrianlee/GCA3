@@ -81,24 +81,60 @@
             scene.addChild(joystick);
             __setKeys( scene, hero );
 
-                        world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
+                        world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,5), true);
             world.SetContinuousPhysics(true);
             // __createEnemies( director, scene );
-            var actor =
-                                    createBall(
-                                            director,
-                                            world,
-                                            0,
-                                            0,
-                                            {
-                                                radius:         18,
-                                                density:        2,
-                                                restitution:    .3,
-                                                friction:       .2,
-                                                tolerance:      .1
-                                            }) ;
-            //console.log(actor);
+                var dx0=                0;
+                var dy0=                -512;
+                var dx1=                director.width;
+                var dy1=                director.height;
+
+                var i;
+
+                var bounds=[
+                        dx0,dy0,
+                        dx1,dy0,
+                        dx1,dy1,
+                        dx0,dy1,
+                        dx0,dy0
+                    ];
+            for( i=0; i<4; i++ )    {
+                var actor0= new CAAT.B2DPolygonBody().createBody(
+                    world,
+                    {
+                        bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
+                        density:    1.2,
+                        friction:   1,
+                        restitution:.5,
+                        polygonType:CAAT.B2DPolygonBody.Type.EDGE,
+                        bodyDef:    [
+                            {x: bounds[i*2  ],  y: bounds[i*2+1] },
+                            {x: bounds[i*2+2],  y: bounds[i*2+3] }
+                        ],
+                        userData:   {}
+                    });
+                    scene.addChild(actor0);
+                }
+
+
+            var actor = createBall(
+                            director,
+                            world,
+                            100,
+                            100,
+                            {
+                                radius:         18,
+                                density:        2,
+                                restitution:    .3,
+                                friction:       .2,
+                                tolerance:      .1
+                            }) ;
             scene.addChild(actor);
+
+
+
+
+        
 
             CAAT.loop(60);
         }
@@ -250,7 +286,41 @@
                     if ( collide.length ) {
                         // collision with enemies.
                         hero.setLocation( 112, 112 );
+
+                                        for (var b = world.m_bodyList; b; b = b.m_next) {
+                        var pos;
+                        var fix= b.GetFixtureList();
+                        if ( fix ) {
+                            var poly= fix.GetShape();
+                            if ( poly instanceof Box2D.Collision.Shapes.b2PolygonShape ) {
+                                pos= Box2D.Common.Math.b2Math.MulX(b.m_xf, poly.m_centroid);
+                            } else {
+                                pos= b.GetPosition();
+                            }
+                        }
+
+                        var ix= e.x/CAAT.PMR;
+                        var iy= e.y/CAAT.PMR;
+                        var mag= Math.sqrt( (pos.x - ix)*(pos.x - ix) + (pos.y-iy)*(pos.y-iy) );
+                        var angle= Math.atan2( pos.y-iy, pos.x-ix );
+                        var maxD= 5;
+                        if ( mag>maxD ) {
+                            mag=maxD;
+                        }
+                        mag= maxD-mag;
+
+                        b.ApplyImpulse(
+                                new Box2D.Common.Math.b2Vec2(
+                                        mag*Math.cos(angle),
+                                        mag*Math.sin(angle)
+                                ),
+                                pos );
                     }
+
+
+
+                    }
+
                 },
                 null);
         }
@@ -295,6 +365,7 @@
                         // collision with enemies.
                         alert("collison");
                         hero.setLocation( scene.width/2-hero.width/2, scene.height/2-hero.height/2 );
+                    
                     }
                 },
                 null);
