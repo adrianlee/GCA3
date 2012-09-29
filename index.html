@@ -1,6 +1,8 @@
 <script type="text/javascript" src="lib/caat.js"></script>
 <script type="text/javascript" src="main.js"></script>
 <script type="text/javascript" src="player.js"></script>
+<script type="text/javascript" src="enemies.js"></script>
+
 <div class="sample" id="div_canvas"></div>
 
 <style type="text/css">
@@ -25,7 +27,6 @@
         var collision=          null;
         var entitiesCollision=  null;
         var hero=               null;
-        var r0=                 new CAAT.Rectangle();
 
         var wallThickness = 25;
 
@@ -38,16 +39,16 @@
             setFillStyle('#ffff00')
 
         joystick.addChild(subjs);
+
         joystick.mouseMove = function(e){
             var child = this.childrenList[0];
-            child.setLocation(
-                e.point.x - child.width/2,
-                e.point.y - child.height/2
-            );
-            this.joy_x = e.point.x-this.width/2;
-            this.joy_y = e.point.y -this.height/2;
-
-        };
+                child.setLocation(
+                    e.point.x - child.width/2,
+                    e.point.y - child.height/2
+                );
+                this.joy_x = e.point.x - this.width/2;
+                this.joy_y = e.point.y - this.height/2;
+            };
 
         function move(x,y,speed){
 
@@ -55,21 +56,27 @@
 
         function __start() {
 
-            var director= new CAAT.Director().
+            var director = new CAAT.Director().
                     initialize( 800,500, document.getElementById('experiment-canvas') ).
-                    setClear( CAAT.Director.CLEAR_DIRTY_RECTS );    //  enable dirty rects cleaning
+                    setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
 
-            var scene= director.createScene();
+            var scene = director.createScene();
             scene.setFillStyle( '#000' );
 
             __createLevel( director, scene, wallThickness );
             __createHero( scene );
             // __createEnemies( director, scene );
-            __createBehaviours( director, scene );
+            // __createBehaviours( director, scene );
+            __startLevel(scene, 1);
+            __setJoystick(scene);
             scene.addChild(joystick);
             __setKeys( scene, hero );
 
             CAAT.loop(60);
+        }
+
+        function __setJoystick(scene) {
+
         }
 
         function __setKeys( scene, selected ) {
@@ -91,19 +98,17 @@
                             var nx= selected.x + joystick.joy_x*(ttime/1100)*10;
                             var ny= selected.y + joystick.joy_y*(ttime/1100)*10;
 
-
-
                             /**
                              * Test map collision: hero vs map.
                              */
 
-                             var collides = collision.getOverlappingActors(r0.setBounds(nx, ny, selected.width, selected.height));
+                            var collides = collision.getOverlappingActors(new CAAT.Rectangle().setBounds(nx, ny, selected.width, selected.height));
 
-                             if (!collides.length) {
+                            if (!collides.length) {
                                 selected.setLocation( nx, ny );
-                             } else {
+                            } else {
                                 console.log("collision")
-                             }
+                            }
                     }
                     prevTime = ottime;
                 },
@@ -222,25 +227,6 @@
                 null);
         }
 
-        function __createBehaviours( director, scene ) {
-            var size = 25;
-
-            var b1 = new CAAT.Actor().
-                setFillStyle( '#bb0' ).
-                setBounds(0,0,21,7).
-                addBehavior(
-                    new CAAT.PathBehavior().
-                        setValues(
-                            new CAAT.Path().
-                                setLinear( 20, 0, director.width, 400 )
-                        ).
-                        setAutoRotate(true).
-                        setFrameTime( 0, 2000 + 3*250 ).
-                        setCycle( true )
-                );
-            scene.addChild(b1);
-        }
-
         function __createHero( scene ) {
             var size= 25;
             hero = new CAAT.Actor().
@@ -249,6 +235,43 @@
                     initialize( 12, size, size/2 ).
                     cacheAsBitmap();
             scene.addChild( hero );
+        }
+
+        function __startLevel(scene, level) {
+            var enemyContainer;
+            var enemy = [];
+            var temp;
+
+            var getRand = function () {
+                return Math.floor((Math.random()*10)+1);
+            }
+
+            // Create container for holding enemies
+            enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+
+            // Randomly generate enemies based on level, addChild to container
+            for (i = 0; i < 3; i++) {
+                temp = enemy1(0, getRand()*40, 800, getRand()*50, 1000, 3000);
+                enemyContainer.addChild(temp);
+                enemy.push(temp);
+            }
+
+            // add container to scene
+            scene.addChild(enemyContainer);
+
+            scene.createTimer( scene.time, Number.MAX_VALUE, null,
+                function(time, ttime, timerTask) {
+                    entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
+                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
+                    if ( collide.length ) {
+                        // collision with enemies.
+                        alert("collison");
+                        hero.setLocation( scene.width/2-hero.width/2, scene.height/2-hero.height/2 );
+                    }
+                },
+                null);
+
+            // enemyContainer.destroy();
         }
 
         function __createLevel( director, scene, thickness ) {
