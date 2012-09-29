@@ -5,8 +5,8 @@ function Bullet(x,y){
         x: x||100,
         y: y||100,
         density:    1.2,
-        friction:   1,
-        restitution:0.5,
+        friction:   0,
+        restitution:1,
         polygonType:CAAT.B2DPolygonBody.Type.BOX,
         bodyDef:    [
             {x: 0,  y: 0 },
