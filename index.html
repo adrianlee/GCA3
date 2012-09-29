@@ -1,7 +1,7 @@
 <script type="text/javascript" src="lib/caat.js"></script>
 <script type="text/javascript" src="main.js"></script>
-
-<div class="sample" id="div_canvas2"></div>
+<script type="text/javascript" src="player.js"></script>
+<div class="sample" id="div_canvas"></div>
 
 <style type="text/css">
     body {
@@ -15,6 +15,8 @@
 
 <script>
     (function() {
+
+
         CAAT.DEBUG = 1;
 
         window.addEventListener('load', __start, false);
@@ -33,6 +35,30 @@
         var TH=32;
         var wallThickness = 25;
 
+        var joystick = new CAAT.ActorContainer().
+            setBounds(30,30,100,100).
+            setFillStyle('#00ffff');
+
+        var subjs = new CAAT.Actor().
+            setBounds(40,40,20,20).
+            setFillStyle('#ffff00')
+
+        joystick.addChild(subjs);
+        joystick.mouseMove = function(e){
+            var child = this.childrenList[0];
+            child.setLocation(
+                e.point.x - child.width/2,
+                e.point.y - child.height/2
+            );
+            this.joy_x = e.point.x-this.width/2;
+            this.joy_y = e.point.y -this.height/2;
+
+        };
+
+        function move(x,y,speed){
+
+        }
+
         function __start() {
 
             var director= new CAAT.Director().
@@ -46,6 +72,7 @@
             __createHero( scene );
             // __createEnemies( director, scene );
             __createBehaviours( director, scene );
+            scene.addChild(joystick);
             __setKeys( scene, hero );
 
             CAAT.loop(60);
@@ -66,9 +93,9 @@
                         var xinc= (keys[1]-keys[0]);
                         var yinc= (keys[3]-keys[2]);
 
-                        if ( xinc || yinc ) {
-                            var nx= selected.x + (ttime/1000)*pixelsPerSecond * xinc;
-                            var ny= selected.y + (ttime/1000)*pixelsPerSecond * yinc;
+
+                            var nx= selected.x + joystick.joy_x*(ttime/1100)*10;
+                            var ny= selected.y + joystick.joy_y*(ttime/1100)*10;
 
 
 
@@ -121,7 +148,7 @@
                             }
 */
 
-                        }
+
                     }
 
                     prevTime= ottime;
@@ -190,7 +217,7 @@
                             new CAAT.PathBehavior().
                                     setValues(
                                         new CAAT.Path().
-                                                setLinear( x, 20, x, director.height-20 )
+                                                setLinear( x, 20, x, director.h,40)
                                     ).
                                     setPingPong().
                                     setFrameTime( 0, 2000 + i*250 ).
