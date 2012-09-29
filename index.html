@@ -40,36 +40,45 @@
         var wallThickness = 5;
 
         var joystick = true;
+        var joystickSize = 150;
 
         if (joystick) {
             var joystick = new CAAT.ActorContainer().
-                setBounds(30,30,100,100).
-                setFillStyle('#00ffff');
+                setBounds(30,30,joystickSize,joystickSize).
+                setAlpha(0.32).
+                setFillStyle('#00ffff').
+                cacheAsBitmap();
 
-            var subjs = new CAAT.Actor().
-                setBounds(40,40,20,20).
-                setFillStyle('#ffff00')
+            var subjsSize = joystickSize/5;
+            var subjs = new CAAT.ShapeActor().
+                setShape( CAAT.ShapeActor.prototype.SHAPE_CIRCLE ).
+                setBounds(joystickSize/2-subjsSize/2,joystickSize/2-subjsSize/2,subjsSize,subjsSize).
+                setFillStyle('#ffff00').
+                cacheAsBitmap();
 
             joystick.addChild(subjs);
 
             joystick.mouseMove = function(e){
                 var child = this.childrenList[0];
-                    child.setLocation(
-                        e.point.x - child.width/2,
-                        e.point.y - child.height/2
-                    );
+
+                    e.point.x < subjsSize-5 ? e.point.x = subjsSize-5 : e.point.x;
+                    e.point.x > joystickSize-subjsSize+5 ? e.point.x = joystickSize-subjsSize+5 : e.point.x;
+                    e.point.y < subjsSize-5 ? e.point.y = subjsSize-5 : e.point.y;
+                    e.point.y > joystickSize-subjsSize+5 ? e.point.y = joystickSize-subjsSize+5 : e.point.y;
+
+                    child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2);
                     this.joy_x = e.point.x - this.width/2;
                     this.joy_y = e.point.y - this.height/2;
                     console.log("drag");
                 };
-            joystick.mouseExit = function(e){
 
-                if((e.point.x<0 || e.point.x>100) ||(e.point.y<0 ||e.point.y>100) ){
+            joystick.mouseExit = function(e){
+                if((e.point.x<0 || e.point.x>joystickSize) ||(e.point.y<0 ||e.point.y>joystickSize) ){
                     console.log(e.point);
-                this.joy_x = 0;
-                this.joy_y = 0;
-                var child = this.childrenList[0];
-                child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
+                    this.joy_x = 0;
+                    this.joy_y = 0;
+                    var child = this.childrenList[0];
+                    child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
                 }
             }
         }
@@ -101,7 +110,7 @@
 
             scene.onRenderEnd =  function(time)    {
                 world.DrawDebugData();
-                if(time%100 ==0){   
+                if(time%100 ==0){
                     addEnemies(enemyContainer,scene,1);
                 }
             }
@@ -347,7 +356,7 @@
             hero.cacheAsBitmap();
             scene.addChild( hero );
         }
-<<<<<<< HEAD
+
         function addEnemies(container,scene,level){
             for(var i=0;i<20*level;i++){
                 var t = new Bullet(0,Math.random()*500).createBody(world);
@@ -380,7 +389,7 @@
             var getRand = function () {
                 return Math.floor((Math.random()*10)+1);
             }
-            window.w = director; 
+            window.w = director;
             director.endSound();
             // director.audioLoop("music_1");
 
