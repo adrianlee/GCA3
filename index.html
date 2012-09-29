@@ -32,41 +32,45 @@
         var enemyContainer;
         var keys = [0,0,0,0];
         var prevTime = -1;
-        var pixelsPerSecond = 200;
+        var pixelsPerSecond = 400;
         var collision = null;
         var entitiesCollision = null;
         var hero = null;
         var world;
-        var wallThickness = 1;
+        var wallThickness = 5;
 
-        var joystick = new CAAT.ActorContainer().
-            setBounds(30,30,100,100).
-            setFillStyle('#00ffff');
+        var joystick = true;
 
-        var subjs = new CAAT.Actor().
-            setBounds(40,40,20,20).
-            setFillStyle('#ffff00')
+        if (joystick) {
+            var joystick = new CAAT.ActorContainer().
+                setBounds(30,30,100,100).
+                setFillStyle('#00ffff');
 
-        joystick.addChild(subjs);
+            var subjs = new CAAT.Actor().
+                setBounds(40,40,20,20).
+                setFillStyle('#ffff00')
 
-        joystick.mouseMove = function(e){
-            var child = this.childrenList[0];
-                child.setLocation(
-                    e.point.x - child.width/2,
-                    e.point.y - child.height/2
-                );
-                this.joy_x = e.point.x - this.width/2;
-                this.joy_y = e.point.y - this.height/2;
-                console.log("drag");
-            };
-        joystick.mouseExit = function(e){
-            
-            if((e.point.x<0 || e.point.x>100) ||(e.point.y<0 ||e.point.y>100) ){
-                console.log(e.point);
-            this.joy_x = 0;
-            this.joy_y = 0;
-            var child = this.childrenList[0];
-            child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
+            joystick.addChild(subjs);
+
+            joystick.mouseMove = function(e){
+                var child = this.childrenList[0];
+                    child.setLocation(
+                        e.point.x - child.width/2,
+                        e.point.y - child.height/2
+                    );
+                    this.joy_x = e.point.x - this.width/2;
+                    this.joy_y = e.point.y - this.height/2;
+                    console.log("drag");
+                };
+            joystick.mouseExit = function(e){
+
+                if((e.point.x<0 || e.point.x>100) ||(e.point.y<0 ||e.point.y>100) ){
+                    console.log(e.point);
+                this.joy_x = 0;
+                this.joy_y = 0;
+                var child = this.childrenList[0];
+                child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
+                }
             }
         }
 
@@ -108,8 +112,7 @@
             // __createEnemies( director, scene );
             // __createBehaviours( director, scene );
             __startLevel(director, scene, 1);
-            __setJoystick(scene);
-            scene.addChild(joystick);
+            joystick ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
 
 
@@ -148,16 +151,12 @@
 
 
 
-            var b = new Bullet(200,60);
-            scene.addChild(b.createBody(world,b.params));
+            // var b = new Bullet(200,60);
+            // scene.addChild(b.createBody(world,b.params));
+
             window.scene = scene;
 
             CAAT.loop(60);
-        }
-
-
-        function __setJoystick(scene) {
-
         }
 
         function __setKeys( scene, selected ) {
@@ -175,9 +174,13 @@
                         var xinc= (keys[1]-keys[0]);
                         var yinc= (keys[3]-keys[2]);
 
-
-                            var nx= selected.x + joystick.joy_x*(ttime/1100)*10;
-                            var ny= selected.y + joystick.joy_y*(ttime/1100)*10;
+                            if (joystick) {
+                                var nx= selected.x + joystick.joy_x*(ttime/1100)*10;
+                                var ny= selected.y + joystick.joy_y*(ttime/1100)*10;
+                            } else {
+                                var nx= selected.x + (ttime/1000)*pixelsPerSecond * xinc;
+                                var ny= selected.y + (ttime/1000)*pixelsPerSecond * yinc;
+                            }
 
                             /**
                              * Test map collision: hero vs map.
@@ -189,6 +192,18 @@
                                 selected.setLocation( nx, ny );
                             } else {
                                 console.log("collision");
+                                // Allow frictionless surface when collision with wall.
+                                if (wallThickness >= ny || ny + selected.height >= scene.height-wallThickness) {
+                                    // Top & Bottom
+                                    if (!(nx < wallThickness) && !(nx + selected.width > scene.width - wallThickness)) {
+                                        selected.setLocation( nx, selected.y );
+                                    }
+                                } else if (wallThickness >= nx || nx + selected.width >= scene.width-wallThickness) {
+                                    // Left & Right Walls
+                                    if (!(ny < wallThickness) && !(ny + selected.height > scene.height - wallThickness)) {
+                                        selected.setLocation( selected.x, ny );
+                                    }
+                                }
                             }
                     }
                     prevTime = ottime;
@@ -303,11 +318,6 @@
                     if ( collide.length ) {
                         // collision with enemies.
                         hero.setLocation( 112, 112 );
-
-
-
-
-
                     }
 
 
@@ -337,6 +347,7 @@
             hero.cacheAsBitmap();
             scene.addChild( hero );
         }
+<<<<<<< HEAD
         function addEnemies(container,scene,level){
             for(var i=0;i<20*level;i++){
                 var t = new Bullet(0,Math.random()*500).createBody(world);
@@ -381,6 +392,7 @@
             // add container to scene
             scene.addChild(enemyContainer,1);
 
+            // collision detection
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
                     entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
@@ -392,7 +404,7 @@
                         // collision with enemies.
                         director.audioPlay("audio_1");
                         hero.setLocation( scene.width/2-hero.width/2, scene.height/2-hero.height/2 );
-                        enemyContainer.destroy();
+                        // enemyContainer.destroy();
                     }
                 },
                 null);
@@ -409,6 +421,7 @@
 
             collision = new CAAT.QuadTree().create(0, 0, director.width, director.height, walls);
         }
+
         var createBall = function(world,x,y,data) {
                 return new CAAT.B2DCircularBody().enableEvents(false).createBody(
                     world,

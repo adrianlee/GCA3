@@ -36,10 +36,15 @@ function Bullet(x,y){
 
 Bullet.prototype = {
 
+
     createBody: function(world,params){  
         var p = params||this.params;    
         return Bullet.superclass.createBody.call(this,world,p);
+
     }
 
 };
 extend(Bullet,CAAT.B2DPolygonBody);
+
+
+
