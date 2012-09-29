@@ -17,18 +17,23 @@
     <canvas id="experiment-canvas"></canvas>
 </div>
 
+<!-- Preload audio assets into DOM -->
+<audio src='sound/1.mp3' preload='auto' id='audio_1'></audio>
+<audio src='sound/2.mp3' preload='auto' id='audio_2'></audio>
+<audio src='sound/3.mp3' preload='auto' id='audio_3'></audio>
+
 <script>
     (function() {
         CAAT.DEBUG = 1;
 
         window.addEventListener('load', __start, false);
 
-        var keys=               [0,0,0,0];
-        var prevTime=           -1;
-        var pixelsPerSecond=    200;
-        var collision=          null;
-        var entitiesCollision=  null;
-        var hero=               null;
+        var keys = [0,0,0,0];
+        var prevTime = -1;
+        var pixelsPerSecond = 200;
+        var collision = null;
+        var entitiesCollision = null;
+        var hero = null;
         var world;
         var wallThickness = 25;
 
@@ -62,6 +67,11 @@
                     initialize( 800,500, document.getElementById('experiment-canvas') ).
                     setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
 
+            director.
+                addAudio("audio_1", document.getElementById('audio_1')).
+                addAudio("audio_2", document.getElementById('audio_2')).
+                addAudio("audio_3", document.getElementById('audio_3'));
+
             var scene = director.createScene();
             scene.setFillStyle( '#000' );
              scene.onRenderStart= function() {
@@ -76,7 +86,7 @@
             __createHero( scene );
             // __createEnemies( director, scene );
             // __createBehaviours( director, scene );
-            __startLevel(scene, 1);
+            __startLevel(director, scene, 1);
             __setJoystick(scene);
             scene.addChild(joystick);
             __setKeys( scene, hero );
@@ -216,7 +226,7 @@
         }
 
         function __createEnemies( director, scene ) {
-            var NUM_ENEMIES= 4;
+            var NUM_ENEMIES = 4;
             var x,y;
 
             var lerp= [
@@ -335,7 +345,7 @@
             scene.addChild( hero );
         }
 
-        function __startLevel(scene, level) {
+        function __startLevel(director, scene, level) {
             var enemyContainer;
             var enemy = [];
             var temp;
@@ -363,7 +373,7 @@
                     var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
                     if ( collide.length ) {
                         // collision with enemies.
-                        alert("collison");
+                        director.audioPlay("audio_1");
                         hero.setLocation( scene.width/2-hero.width/2, scene.height/2-hero.height/2 );
                     
                     }
