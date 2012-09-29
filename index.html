@@ -24,6 +24,9 @@
 <audio src='sound/3.mp3' preload='auto' id='audio_3'></audio>
 <audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
 
+<img src='Image/badGuy.png' preload='auto' id='sprite_1'></img>
+<img src='Image/Fish.png' preload='auto' id='sprite_2'></img>
+
 <script>
     (function() {
         CAAT.DEBUG = 1;
@@ -39,7 +42,7 @@
         var world;
         var wallThickness = 5;
 
-        var joystick = true;
+        var joystick = false;
         var joystickSize = 150;
 
         if (joystick) {
@@ -69,12 +72,10 @@
                     child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2);
                     this.joy_x = e.point.x - this.width/2;
                     this.joy_y = e.point.y - this.height/2;
-                    console.log("drag");
                 };
 
             joystick.mouseExit = function(e){
                 if((e.point.x<0 || e.point.x>joystickSize) ||(e.point.y<0 ||e.point.y>joystickSize) ){
-                    console.log(e.point);
                     this.joy_x = 0;
                     this.joy_y = 0;
                     var child = this.childrenList[0];
@@ -103,7 +104,7 @@
             world.SetContinuousPhysics(true);
 
             scene.setFillStyle( '#000' );
-             scene.onRenderStart= function() {
+            scene.onRenderStart= function() {
                     world.Step(1.0/60, 1,1);
                     world.ClearForces();
                 };
@@ -115,11 +116,14 @@
                 }
             }
 
+            var badguy = new CAAT.SpriteImage().initialize(document.getElementById('sprite_1'), 1, 1);
+
             __createLevel( director, scene );
             __createHero( scene );
 
             // __createEnemies( director, scene );
             // __createBehaviours( director, scene );
+
             __startLevel(director, scene, 1);
             joystick ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
@@ -140,8 +144,10 @@
                         dx0,dy1,
                         dx0,dy0
                     ];
+
+            // Wall
             for( i=0; i<4; i++ )    {
-                var actor0= new CAAT.B2DPolygonBody().createBody(
+                var actor0 = new CAAT.B2DPolygonBody().createBody(
                     world,
                     {
                         bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
@@ -157,8 +163,6 @@
                     });
                     scene.addChild(actor0);
                 }
-
-
 
             // var b = new Bullet(200,60);
             // scene.addChild(b.createBody(world,b.params));
@@ -347,7 +351,7 @@
                     polygonType:CAAT.B2DPolygonBody.Type.BOX,
                     bodyDef:    [
                         {x: 0,  y: 0 },
-                        {x: 50,  y: 50 }
+                        {x: 10,  y: 10 }
                     ],
                     userData:   {}
 
@@ -358,13 +362,16 @@
         }
 
         function addEnemies(container,scene,level){
-            for(var i=0;i<20*level;i++){
-                var t = new Bullet(0,Math.random()*500).createBody(world);
+            for(var i=0;i<1*level;i++){
+                // var t = new Bullet(0,Math.random()*500).createBody(world);
+                var t = new Fish(0, Math.random()*500).createBody(world);
+
+                window.t = t;
                 enemyContainer.addChild(t);
                // enemy.push(t);
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
-                t.setVelocity(hero.x-t.x,hero.y-t.y,10);
+                t.setVelocity(hero.x-t.x,hero.y-t.y,2);
                 window.t=t;
                // console.log(t.params.x);
                 t.addListener({
