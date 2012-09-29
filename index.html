@@ -186,21 +186,19 @@
                             if (!collides.length) {
                                 selected.setLocation( nx, ny );
                             } else {
+                                console.log("collision");
                                 // Allow frictionless surface when collision with wall.
                                 if (wallThickness >= ny || ny + selected.height >= scene.height-wallThickness) {
                                     // Top & Bottom
                                     if (!(nx < wallThickness) && !(nx + selected.width > scene.width - wallThickness)) {
-                                        console.log("top bottom");
                                         selected.setLocation( nx, selected.y );
                                     }
                                 } else if (wallThickness >= nx || nx + selected.width >= scene.width-wallThickness) {
                                     // Left & Right Walls
                                     if (!(ny < wallThickness) && !(ny + selected.height > scene.height - wallThickness)) {
-                                        console.log("left right");
                                         selected.setLocation( selected.x, ny );
                                     }
                                 }
-                                // console.log("collision");
                             }
                     }
                     prevTime = ottime;
