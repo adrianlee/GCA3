@@ -77,6 +77,8 @@
                     initialize( 800,500, document.getElementById('experiment-canvas') ).
                     setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
 
+            CAAT.currentDirector = director;
+
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
                 addAudio("audio_2", document.getElementById('audio_2')).
@@ -96,7 +98,7 @@
             scene.onRenderEnd =  function()    {
                 world.DrawDebugData();
             }
-            __createLevel( director, scene, wallThickness );
+            __createLevel( director, scene );
             __createHero( scene );
             // __createEnemies( director, scene );
             // __createBehaviours( director, scene );
@@ -297,7 +299,7 @@
                         // collision with enemies.
                         hero.setLocation( 112, 112 );
 
-                        
+
 
 
 
@@ -312,12 +314,12 @@
             var size= 25;
 
             hero = new CAAT.B2DPolygonBody().createBody(world,{
-                    bodyType:   Box2D.Dynamics.b2Body.b2_dynamicBody,
-                    x: 100,
-                    y: 100,
+                    bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
+                    x: scene.width/2,
+                    y: scene.height/2,
                     density:    1.2,
                     friction:   1,
-                    restitution:.5,
+                    restitution: 0.5,
                     polygonType:CAAT.B2DPolygonBody.Type.BOX,
                     bodyDef:    [
                         {x: 0,  y: 0 },
@@ -380,20 +382,20 @@
                         // collision with enemies.
                         director.audioPlay("audio_1");
                         hero.setLocation( scene.width/2-hero.width/2, scene.height/2-hero.height/2 );
-
+                        enemyContainer.destroy();
                     }
                 },
                 null);
-
-            // enemyContainer.destroy();
         }
-        function __createLevel( director, scene, thickness ) {
+
+
+        function __createLevel( director, scene ) {
             var walls = [];
 
-            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, director.width, thickness) }); // top
-            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, thickness, director.height) }); // left
-            walls.push({ AABB: new CAAT.Rectangle().setBounds(director.width - thickness, 0, thickness, director.height) }); // right
-            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, director.height - thickness, director.width, thickness) }); // bottom
+            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, director.width, wallThickness) }); // top
+            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, wallThickness, director.height) }); // left
+            walls.push({ AABB: new CAAT.Rectangle().setBounds(director.width - wallThickness, 0, wallThickness, director.height) }); // right
+            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, director.height - wallThickness, director.width, wallThickness) }); // bottom
 
             collision = new CAAT.QuadTree().create(0, 0, director.width, director.height, walls);
         }
