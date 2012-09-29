@@ -31,7 +31,7 @@
         var levelH= 15;
         var TW=32;
         var TH=32;
-        var wallThickness = 50;
+        var wallThickness = 25;
 
         function __start() {
 
@@ -44,7 +44,8 @@
 
             __createLevel( director, scene, wallThickness );
             __createHero( scene );
-            __createEnemies( director, scene );
+            // __createEnemies( director, scene );
+            __createBehaviours( director, scene );
             __setKeys( scene, hero );
 
             CAAT.loop(60);
@@ -169,11 +170,12 @@
             var x,y;
 
             var lerp= [
-                    new CAAT.Interpolator().createBounceOutInterpolator(false),
-                    new CAAT.Interpolator().createExponentialInInterpolator(3,true)
+                new CAAT.Interpolator().createBounceOutInterpolator(false),
+                new CAAT.Interpolator().createExponentialInInterpolator(3,true)
             ];
 
             var enemies= [];
+
             for( var i=0; i<NUM_ENEMIES; i++ ) {
 
                 /**
@@ -195,6 +197,7 @@
                                     setCycle( true ).
                                     setInterpolator( lerp[i%lerp.length] )
                         );
+
                 scene.addChild(enemy);
                 enemies.push( enemy );
 
@@ -237,6 +240,25 @@
                     }
                 },
                 null);
+        }
+
+        function __createBehaviours( director, scene ) {
+            var size = 25;
+
+            var b1 = new CAAT.Actor().
+                setFillStyle( '#bb0' ).
+                setBounds(0,0,21,7).
+                addBehavior(
+                    new CAAT.PathBehavior().
+                        setValues(
+                            new CAAT.Path().
+                                setLinear( 20, 0, director.width, 400 )
+                        ).
+                        setAutoRotate(true).
+                        setFrameTime( 0, 2000 + 3*250 ).
+                        setCycle( true )
+                );
+            scene.addChild(b1);
         }
 
         function __createHero( scene ) {
