@@ -15,8 +15,6 @@
 
 <script>
     (function() {
-
-
         CAAT.DEBUG = 1;
 
         window.addEventListener('load', __start, false);
@@ -29,10 +27,6 @@
         var hero=               null;
         var r0=                 new CAAT.Rectangle();
 
-        var levelW= 24;
-        var levelH= 15;
-        var TW=32;
-        var TH=32;
         var wallThickness = 25;
 
         var joystick = new CAAT.ActorContainer().
@@ -110,48 +104,8 @@
                              } else {
                                 console.log("collision")
                              }
-
-/*
-                            var collides = collision.getOverlappingActors(r0.setBounds( nx, ny, selected.width, selected.height ) );
-                            if ( !collides.length ) {
-                                // no collision, move to new location
-                                selected.setLocation( nx, ny );
-                            } else {
-
-                                // adjust colliding position.
-                                // collides is an array of objects which at least contain a Rectangle.
-                                for( var i=0; i<collides.length; i++ ) {
-                                    var coll= collides[i];
-
-                                    r0.intersect( coll.AABB, r1 );
-
-                                    // if width is greater than height, we assume vertical collision.
-                                    if ( r1.width>r1.height ) {
-                                        if ( r0.y===r1.y )  {   // intersection on top
-                                            ny= r1.y1;
-                                        } else if ( r0.y1===r1.y1 ) {   // intersection on bottom
-                                            ny= r1.y-selected.height;
-                                        }
-                                    // else elements collide horizontally
-                                    } else {
-                                        if ( r0.x===r1.x )  {   // intersection on left
-                                            nx= r1.x1;
-                                        } else if ( r0.x1===r1.x1 ) {   // intersection on right
-                                            nx= r1.x-selected.width;
-                                        }
-                                    }
-
-                                    if ( nx!==selected.x || ny!==selected.y ) {
-                                        selected.setLocation( nx, ny );
-                                    }
-                                }
-                            }
-*/
-
-
                     }
-
-                    prevTime= ottime;
+                    prevTime = ottime;
                 },
                 null
             );
@@ -257,8 +211,7 @@
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
 
-                    var max= Math.max( levelW, levelH );
-                    entitiesCollision = new CAAT.QuadTree().create( 0,0,max*TW,max*TH, enemies );
+                    entitiesCollision = new CAAT.QuadTree().create( 0,0, director.width, director.height, enemies );
 
                     var collide= entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
                     if ( collide.length ) {
@@ -301,11 +254,10 @@
         function __createLevel( director, scene, thickness ) {
             var walls = [];
 
-            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, director.width, thickness) });   // top
-            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, thickness, director.height) });   // left
+            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, director.width, thickness) }); // top
+            walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, thickness, director.height) }); // left
             walls.push({ AABB: new CAAT.Rectangle().setBounds(director.width - thickness, 0, thickness, director.height) }); // right
             walls.push({ AABB: new CAAT.Rectangle().setBounds(0, director.height - thickness, director.width, thickness) }); // bottom
-
 
             collision = new CAAT.QuadTree().create(0, 0, director.width, director.height, walls);
         }
