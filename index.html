@@ -77,6 +77,9 @@
                 addAudio("music_1", document.getElementById('music_1'));
 
             var scene = director.createScene();
+            world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,5), true);
+            world.SetContinuousPhysics(true);
+
             scene.setFillStyle( '#000' );
              scene.onRenderStart= function() {
                     world.Step(1.0/60, 1,1);
@@ -95,8 +98,7 @@
             scene.addChild(joystick);
             __setKeys( scene, hero );
 
-                        world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,5), true);
-            world.SetContinuousPhysics(true);
+
             // __createEnemies( director, scene );
                 var dx0=                0;
                 var dy0=                -512;
@@ -132,7 +134,6 @@
 
 
             var actor = createBall(
-                            director,
                             world,
                             100,
                             100,
@@ -143,7 +144,20 @@
                                 friction:       .2,
                                 tolerance:      .1
                             }) ;
+            var actor2 = createBall(
+                world,
+                150,
+                100,
+                {
+                    radius:         18,
+                    density:        2,
+                    restitution:    .3,
+                    friction:       .2,
+                    tolerance:      .1
+                }) ;
             scene.addChild(actor);
+            scene.addChild(actor2);
+
 
             CAAT.loop(60);
         }
@@ -296,39 +310,12 @@
                         // collision with enemies.
                         hero.setLocation( 112, 112 );
 
-                                        for (var b = world.m_bodyList; b; b = b.m_next) {
-                        var pos;
-                        var fix= b.GetFixtureList();
-                        if ( fix ) {
-                            var poly= fix.GetShape();
-                            if ( poly instanceof Box2D.Collision.Shapes.b2PolygonShape ) {
-                                pos= Box2D.Common.Math.b2Math.MulX(b.m_xf, poly.m_centroid);
-                            } else {
-                                pos= b.GetPosition();
-                            }
-                        }
-
-                        var ix= e.x/CAAT.PMR;
-                        var iy= e.y/CAAT.PMR;
-                        var mag= Math.sqrt( (pos.x - ix)*(pos.x - ix) + (pos.y-iy)*(pos.y-iy) );
-                        var angle= Math.atan2( pos.y-iy, pos.x-ix );
-                        var maxD= 5;
-                        if ( mag>maxD ) {
-                            mag=maxD;
-                        }
-                        mag= maxD-mag;
-
-                        b.ApplyImpulse(
-                                new Box2D.Common.Math.b2Vec2(
-                                        mag*Math.cos(angle),
-                                        mag*Math.sin(angle)
-                                ),
-                                pos );
-                    }
+                        
 
 
 
                     }
+
 
                 },
                 null);
@@ -336,11 +323,23 @@
 
         function __createHero( scene ) {
             var size= 25;
-            hero = new CAAT.Actor().
-                    setBounds( scene.width/2 - size/2, scene.height/2 - size/2, size, size ).
-                    setFillStyle( "#ff0000" ).
-                    initialize( 12, size, size/2 ).
-                    cacheAsBitmap();
+
+            hero = new CAAT.B2DPolygonBody().createBody(world,{
+                    bodyType:   Box2D.Dynamics.b2Body.b2_dynamicBody,
+                    x: 100,
+                    y: 100,
+                    density:    1.2,
+                    friction:   1,
+                    restitution:.5,
+                    polygonType:CAAT.B2DPolygonBody.Type.BOX,
+                    bodyDef:    [
+                        {x: 0,  y: 0 },
+                        {x: 10,  y: 10 }
+                    ],
+                    userData:   {}
+
+            });
+            hero.cacheAsBitmap();
             scene.addChild( hero );
         }
 
@@ -396,7 +395,7 @@
 
             collision = new CAAT.QuadTree().create(0, 0, director.width, director.height, walls);
         }
-        var createBall = function(director,world,x,y,data) {
+        var createBall = function(world,x,y,data) {
                 return new CAAT.B2DCircularBody().enableEvents(false).createBody(
                     world,
                     {
