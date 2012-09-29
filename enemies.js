@@ -41,6 +41,9 @@ Bullet.prototype = {
         var p = params||this.params;    
         return Bullet.superclass.createBody.call(this,world,p);
 
+    },
+    move: function(){
+        console.log(this);
     }
 
 };

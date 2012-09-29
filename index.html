@@ -123,15 +123,14 @@
 
             scene.onRenderEnd =  function(time)    {
                 world.DrawDebugData();
-                console.log(enemyContainer.childrenList.length==0 && !levelpause);
                 if(enemyContainer.childrenList.length==0 && !levelpause){
-                    console.log("test");
+                    console.log("Level: " +level);
                     __nextLevel(level);
                     level++;
                     levelpause = true;
                 }else{
                     for(var i=0;i<enemyContainer.childrenList.length;i++){
-                    //    enemyContainer.childrenList[i].move();
+                        enemyContainer.childrenList[i].move();
                     levelpause = false;
                     }
                 }
@@ -236,7 +235,6 @@
         function __nextLevel(level){
             scene.createTimer(scene.time+300,1,null,function(time,ttime,timerTask){
                 addEnemies(enemyContainer,scene,level);
-                console.log(level);
                 this.cancel();
             },null)
         }
