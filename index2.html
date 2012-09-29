@@ -1,0 +1,79 @@
+<script type="text/javascript" src="lib/caat.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="player.js"></script>
+<script type="text/javascript" src="lib/box2d.js"></script>
+<script type="text/javascript" src="lib/caat-box2d.js"></script>
+<div class="sample" id="div_canvas"></div>
+
+<style type="text/css">
+    body {
+        background: #333;
+    }
+</style>
+
+<div id="experiment-holder">
+    <canvas id="experiment-canvas"></canvas>
+</div>
+
+<script>
+    (function() {
+        CAAT.DEBUG = 1;
+
+        window.addEventListener('load', __start, false);
+        var world;
+
+        function __start() {
+
+            var director= new CAAT.Director().
+                    initialize( 800,500, document.getElementById('experiment-canvas') ).
+                    setClear( CAAT.Director.CLEAR_DIRTY_RECTS );    //  enable dirty rects cleaning
+
+            var scene= director.createScene();
+            scene.setFillStyle( '#000' );
+            scene.onRenderStart= function() {
+                    world.Step(1.0/60, 1,1);
+                    world.ClearForces();
+                };
+
+            scene.onRenderEnd =  function()    {
+                world.DrawDebugData();
+            }
+            world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,9.8), true);
+            world.SetContinuousPhysics(true);
+            // __createEnemies( director, scene );
+            var actor =
+                                    createBall(
+                                            director,
+                                            world,
+                                            0,
+                                            0,
+                                            {
+                                                radius:         18,
+                                                density:        2,
+                                                restitution:    .3,
+                                                friction:       .2,
+                                                tolerance:      .1
+                                            }) ;
+            //console.log(actor);
+            scene.addChild(actor);
+            CAAT.loop(60);
+        }
+
+    var createBall = function(director,world,x,y,data) {
+                return new CAAT.B2DCircularBody().enableEvents(false).createBody(
+                    world,
+                    {
+                        x:                      x,
+                        y:                      y,
+                        bodyType:               Box2D.Dynamics.b2Body.b2_dynamicBody,
+                        radius:                 data.radius,
+                        density:                data.density,
+                        restitution:            data.restitution,
+                        friction:               data.friction,
+                        bodyDefScaleTolerance:  data.tolerance,
+                        userData:               null
+                    });
+        }
+
+    })();
+</script>
