@@ -29,7 +29,7 @@
         CAAT.DEBUG = 1;
 
         window.addEventListener('load', __start, false);
-
+        var enemyContainer;
         var keys = [0,0,0,0];
         var prevTime = -1;
         var pixelsPerSecond = 200;
@@ -95,11 +95,16 @@
                     world.ClearForces();
                 };
 
-            scene.onRenderEnd =  function()    {
+            scene.onRenderEnd =  function(time)    {
                 world.DrawDebugData();
+                if(time%100 ==0){   
+                    addEnemies(enemyContainer,scene,1);
+                }
             }
+
             __createLevel( director, scene );
             __createHero( scene );
+
             // __createEnemies( director, scene );
             // __createBehaviours( director, scene );
             __startLevel(director, scene, 1);
@@ -332,30 +337,16 @@
             hero.cacheAsBitmap();
             scene.addChild( hero );
         }
-
-        function __startLevel(director, scene, level) {
-            var enemyContainer;
-            var enemy = [];
-            var temp;
-
-            var getRand = function () {
-                return Math.floor((Math.random()*10)+1);
-            }
-
-            director.endSound();
-            // director.audioLoop("music_1");
-
-            // Create container for holding enemies
-            enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
-
-            // Randomly generate enemies based on level, addChild to container
+        function addEnemies(container,scene,level){
             for(var i=0;i<20*level;i++){
-                var t = new Bullet(0,Math.random()*500);
-                enemyContainer.addChild(t.createBody(world,t.params));
-                enemy.push(t);
+                var t = new Bullet(0,Math.random()*500).createBody(world);
+                enemyContainer.addChild(t);
+               // enemy.push(t);
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
-                t.setVelocity(5+Math.random()*3,2+Math.random()*3);
+                t.setVelocity(hero.x-t.x,hero.y-t.y,10);
+                window.t=t;
+               // console.log(t.params.x);
                 t.addListener({
                     actorLifeCycleEvent : function(actor, event, time) {
                         if (event === 'expired') {
@@ -368,6 +359,25 @@
 
 
             }
+        }
+
+        function __startLevel(director, scene, level) {
+
+            var enemy = [];
+            var temp;
+
+            var getRand = function () {
+                return Math.floor((Math.random()*10)+1);
+            }
+            window.w = director; 
+            director.endSound();
+            // director.audioLoop("music_1");
+
+            // Create container for holding enemies
+            enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+
+            // Randomly generate enemies based on level, addChild to container
+            addEnemies(enemyContainer,scene,level);
             // add container to scene
             scene.addChild(enemyContainer,1);
 

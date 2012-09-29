@@ -16,17 +16,15 @@ function Bullet(x,y){
     };
 
     function getParams(){
-        console.log("as");
         return params;
     }
-    function createBody(world,params){
-        return Bullet.superclass.createBody(world,params);
-    }
-    function setVelocity(x,y){
-        this.worldBody.SetLinearVelocity(
+
+    function setVelocity(x,y,speed){
+        var theta = Math.atan(y/x);
+        this.worldBody.SetLinearVelocity(   
             new Box2D.Common.Math.b2Vec2(
-                x,
-                y ));
+                speed*Math.cos(x),
+                speed*Math.sin(y) ));
         return this;
     }
   //  this.createBody = createBody;
@@ -34,49 +32,14 @@ function Bullet(x,y){
     this.params = getParams();
     return this;
 };
-extend(Bullet,CAAT.B2DPolygonBody);
-/*
+
+
 Bullet.prototype = {
 
-    createBody: function(world,params){
-        var test = this.params;  
-        Bullet.superclass.createBody(world,this.params);
-        var velocity= {
-            x: 0,
-            y: Math.random()
-        };
-        this.worldBody.SetLinearVelocity(
-        new Box2D.Common.Math.b2Vec2(
-                velocity.x,
-                velocity.y) );
-        return this;
+    createBody: function(world,params){  
+        var p = params||this.params;    
+        return Bullet.superclass.createBody.call(this,world,p);
     }
+
 };
 extend(Bullet,CAAT.B2DPolygonBody);
-
-
-function Bullet(world,x,y){
-
-    return new CAAT.B2DPolygonBody()
-}*/
-function enemy1() {
-
-}
-
-        function enemy1(x1, y1, x2, y2, delay, speed) {
-            return new CAAT.Actor().
-                setFillStyle( 'blue' ).
-                setBounds(-20, -20, 20, 10).
-                setDiscardable(true).
-                // cacheAsBitmap().
-                addBehavior(
-                    new CAAT.PathBehavior().
-                        setValues(
-                            new CAAT.Path().
-                                setLinear( x1, y1, x2, y2 )
-                        ).
-                        setAutoRotate(true).
-                        setFrameTime( delay, speed ).
-                        setCycle( false )
-                );
-        }
