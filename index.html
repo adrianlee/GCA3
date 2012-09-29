@@ -58,21 +58,6 @@
         function move(x,y,speed){
             
         }
-        Bullet.prototype = new CAAT.Actor();
-
-        Bullet.setFillStyle( '#bb0' ).
-                        setBounds(x,0,7,21).
-                        addBehavior(
-                            new CAAT.PathBehavior().
-                                    setValues(
-                                        new CAAT.Path().
-                                                setLinear( x, 20, x, director.height-20 )
-                                    ).
-                                    setPingPong().
-                                    setFrameTime( 0, 2000 + i*250 ).
-                                    setCycle( true ).
-                                    setInterpolator( lerp[i%lerp.length] )
-                        );
 
         function __start() {
 
@@ -230,7 +215,7 @@
                             new CAAT.PathBehavior().
                                     setValues(
                                         new CAAT.Path().
-                                                setLinear( x, 20, x, director.height-20 )
+                                                setLinear( x, 20, x, director.h,40)
                                     ).
                                     setPingPong().
                                     setFrameTime( 0, 2000 + i*250 ).
