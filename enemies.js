@@ -39,11 +39,12 @@ Bullet.prototype = {
 
     createBody: function(world,params){  
         var p = params||this.params;    
-        return Bullet.superclass.createBody.call(this,world,p);
-
+        var t =Bullet.superclass.createBody.call(this,world,p);
+        t.worldBody.SetFixedRotation(false);
+        return t;
     },
     move: function(){
-        console.log(this);
+  
     }
 
 };

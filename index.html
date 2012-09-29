@@ -111,8 +111,28 @@
             joystick ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
 
+            var listener = new Box2D.Dynamics.b2ContactListener;
+            listener.BeginContact = function(contact){
 
+            }
+            listener.EndContact = function(contact){
+                console.log("end");
+                var a = contact.GetFixtureA().GetBody();
+                var b  = contact.GetFixtureB().GetBody();
+                a.SetAngularVelocity(0);
+                b.SetAngularVelocity(0);
+               // console.log(contact.GetFixtureA().GetBody());
 
+               /* var a = contact.GetFixtureA().GetBody();
+                var angle = Math.atan(a.GetLinearVelocity().x/a.GetLinearVelocity().y);
+                a.SetTransform(new Box2D.Common.Math.b2Transform(a.GetPosition(),new Box2D.Common.Math.b2Mat22.FromAngle(angle)));
+
+                a = contact.GetFixtureB().GetBody();
+                angle = Math.atan(a.GetLinearVelocity().x/a.GetLinearVelocity().y);
+
+                a.SetTransform(new Box2D.Common.Math.b2Transform(a.GetPosition(),new Box2D.Common.Math.b2Mat22.FromAngle(angle)));*/
+            }
+            world.SetContactListener(listener); 
             window.scene = scene;
 
             /* Game Loop */
