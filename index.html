@@ -24,8 +24,8 @@
 <audio src='sound/3.mp3' preload='auto' id='audio_3'></audio>
 <audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
 
-<img src='Image/badGuy.png' preload='auto' id='sprite_1'></img>
-<img src='Image/Fish.png' preload='auto' id='sprite_2'></img>
+<img src='Image/Units/BadGuy.png' preload='auto' id='sprite_1'></img>
+<img src='Image/Units/Fish.png' preload='auto' id='sprite_2'></img>
 
 <script>
     (function() {
@@ -42,9 +42,11 @@
         var world;
         var wallThickness = 5;
 
-        var joystick = false;
-        var joystickSize = 150;
+        var level=1;
+        var joystick = true;
 
+        var joystickSize = 150;
+        var levelpause = false;
         if (joystick) {
             var joystick = new CAAT.ActorContainer().
                 setBounds(30,30,joystickSize,joystickSize).
@@ -104,71 +106,39 @@
             world.SetContinuousPhysics(true);
 
             scene.setFillStyle( '#000' );
-            scene.onRenderStart= function() {
-                    world.Step(1.0/60, 1,1);
-                    world.ClearForces();
-                };
 
-            scene.onRenderEnd =  function(time)    {
-                world.DrawDebugData();
-                if(time%100 ==0){
-                    addEnemies(enemyContainer,scene,1);
-                }
-            }
 
             var badguy = new CAAT.SpriteImage().initialize(document.getElementById('sprite_1'), 1, 1);
 
             __createLevel( director, scene );
             __createHero( scene );
-
-            // __createEnemies( director, scene );
-            // __createBehaviours( director, scene );
-
             __startLevel(director, scene, 1);
             joystick ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
 
-
-            // __createEnemies( director, scene );
-                var dx0=                0;
-                var dy0=                0;
-                var dx1=                director.width;
-                var dy1=                director.height;
-
-                var i;
-
-                var bounds=[
-                        dx0,dy0,
-                        dx1,dy0,
-                        dx1,dy1,
-                        dx0,dy1,
-                        dx0,dy0
-                    ];
-
-            // Wall
-            for( i=0; i<4; i++ )    {
-                var actor0 = new CAAT.B2DPolygonBody().createBody(
-                    world,
-                    {
-                        bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
-                        density:    1.2,
-                        friction:   1,
-                        restitution:1,
-                        polygonType:CAAT.B2DPolygonBody.Type.EDGE,
-                        bodyDef:    [
-                            {x: bounds[i*2  ],  y: bounds[i*2+1] },
-                            {x: bounds[i*2+2],  y: bounds[i*2+3] }
-                        ],
-                        userData:   {}
-                    });
-                    scene.addChild(actor0);
-                }
-
-            // var b = new Bullet(200,60);
-            // scene.addChild(b.createBody(world,b.params));
-
             window.scene = scene;
 
+            /* Game Loop */
+            scene.onRenderStart= function() {
+                world.Step(1.0/60, 1,1);
+                world.ClearForces();
+                };
+
+            scene.onRenderEnd =  function(time)    {
+                world.DrawDebugData();
+                if(enemyContainer.childrenList.length==0 && !levelpause){
+                    console.log("Level: " +level);
+                    __nextLevel(level);
+                    level++;
+                    levelpause = true;
+                }else{
+                    for(var i=0;i<enemyContainer.childrenList.length;i++){
+                        enemyContainer.childrenList[i].move();
+                    levelpause = false;
+                    }
+                }
+            }
+            window.c = enemyContainer;
             CAAT.loop(60);
         }
 
@@ -184,16 +154,8 @@
                     if ( -1!=prevTime ) {
                         ttime-= prevTime;
 
-                        var xinc= (keys[1]-keys[0]);
-                        var yinc= (keys[3]-keys[2]);
-
-                            if (joystick) {
                                 var nx= selected.x + joystick.joy_x*(ttime/1100)*10;
                                 var ny= selected.y + joystick.joy_y*(ttime/1100)*10;
-                            } else {
-                                var nx= selected.x + (ttime/1000)*pixelsPerSecond * xinc;
-                                var ny= selected.y + (ttime/1000)*pixelsPerSecond * yinc;
-                            }
 
                             /**
                              * Test map collision: hero vs map.
@@ -204,7 +166,7 @@
                             if (!collides.length) {
                                 selected.setLocation( nx, ny );
                             } else {
-                                console.log("collision");
+
                                 // Allow frictionless surface when collision with wall.
                                 if (wallThickness >= ny || ny + selected.height >= scene.height-wallThickness) {
                                     // Top & Bottom
@@ -224,119 +186,8 @@
                 null
             );
 
-
-            /**
-             * Register a CAAT key listener function
-             */
-            CAAT.registerKeyListener( function kl( keyEvent ) {
-
-                if ( keyEvent.getKeyCode()===CAAT.Keys.UP ) {
-                    keyEvent.preventDefault();
-                    keys[2]= ( keyEvent.getAction()==='up' ) ? 0 : 1;
-                }
-                if ( keyEvent.getKeyCode()===CAAT.Keys.DOWN ) {
-                    keyEvent.preventDefault();
-                    keys[3]= ( keyEvent.getAction()==='up' ) ? 0 : 1;
-                }
-                if ( keyEvent.getKeyCode()===CAAT.Keys.LEFT ) {
-                    keyEvent.preventDefault();
-                    keys[0]= ( keyEvent.getAction()==='up' ) ? 0 : 1;
-
-                    // rotate actor if image
-                    if ( keys[0] ^ keys[1] ) {
-                            selected.setImageTransformation( keys[0] ? CAAT.SpriteImage.prototype.TR_FLIP_HORIZONTAL : CAAT.SpriteImage.prototype.TR_NONE );
-                    }
-                }
-                if ( keyEvent.getKeyCode()===CAAT.Keys.RIGHT ) {
-                    keyEvent.preventDefault();
-                    keys[1]= ( keyEvent.getAction()==='up' ) ? 0 : 1;
-
-                    // rotate actor if image
-                    if ( keys[0] ^ keys[1] ) {
-                        selected.setImageTransformation( keys[1] ? CAAT.SpriteImage.prototype.TR_NONE : CAAT.SpriteImage.prototype.TR_FLIP_HORIZONTAL );
-                    }
-                }
-
-            });
         }
 
-        function __createEnemies( director, scene ) {
-            var NUM_ENEMIES = 4;
-            var x,y;
-
-            var lerp= [
-                new CAAT.Interpolator().createBounceOutInterpolator(false),
-                new CAAT.Interpolator().createExponentialInInterpolator(3,true)
-            ];
-
-            var enemies= [];
-
-            for( var i=0; i<NUM_ENEMIES; i++ ) {
-
-                /**
-                 * create vertically moving enemies.
-                 */
-                x= 50 + (director.width-100)/NUM_ENEMIES * i;
-                var enemy=
-                    new CAAT.Actor().
-                        setFillStyle( '#bb0' ).
-                        setBounds(x,0,7,21).
-                        addBehavior(
-                            new CAAT.PathBehavior().
-                                    setValues(
-                                        new CAAT.Path().
-                                                setLinear( x, 20, x, director.h,40)
-                                    ).
-                                    setPingPong().
-                                    setFrameTime( 0, 2000 + i*250 ).
-                                    setCycle( true ).
-                                    setInterpolator( lerp[i%lerp.length] )
-                        );
-
-                scene.addChild(enemy);
-                enemies.push( enemy );
-
-                /**
-                 * create horizontally moving elemies.
-                 */
-                y= 50 + (director.height-100)/NUM_ENEMIES * i;
-                enemy=
-                    new CAAT.Actor().
-                        setFillStyle( '#bb0' ).
-                        setBounds(x,0,21,7).
-                        addBehavior(
-                            new CAAT.PathBehavior().
-                                    setValues(
-                                        new CAAT.Path().
-                                                setLinear( 50, y, director.width-50, y )
-                                    ).
-                                    setPingPong().
-                                    setFrameTime( 0, 6000 + i*250 ).
-                                    setCycle( true ).
-                                    setInterpolator( lerp[i%lerp.length] )
-                        );
-                scene.addChild(enemy);
-                enemies.push( enemy );
-            }
-
-            /**
-             * Check on every frame, whether our hero collides with any enemy.
-             */
-            scene.createTimer( scene.time, Number.MAX_VALUE, null,
-                function(time, ttime, timerTask) {
-
-                    entitiesCollision = new CAAT.QuadTree().create( 0,0, director.width, director.height, enemies );
-
-                    var collide= entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
-                    if ( collide.length ) {
-                        // collision with enemies.
-                        hero.setLocation( 112, 112 );
-                    }
-
-
-                },
-                null);
-        }
 
         function __createHero( scene ) {
             var size= 25;
@@ -368,17 +219,16 @@
 
                 window.t = t;
                 enemyContainer.addChild(t);
-               // enemy.push(t);
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
                 t.setVelocity(hero.x-t.x,hero.y-t.y,2);
                 window.t=t;
-               // console.log(t.params.x);
                 t.addListener({
                     actorLifeCycleEvent : function(actor, event, time) {
                         if (event === 'expired') {
                             var body = actor.worldBody;
                             world.DestroyBody(body);
+                            actor.destroy();
                         }
                     }
                 });
@@ -386,6 +236,13 @@
 
 
             }
+        }
+
+        function __nextLevel(level){
+            scene.createTimer(scene.time+300,1,null,function(time,ttime,timerTask){
+                addEnemies(enemyContainer,scene,level);
+                this.cancel();
+            },null)
         }
 
         function __startLevel(director, scene, level) {
@@ -428,6 +285,41 @@
 
 
         function __createLevel( director, scene ) {
+
+
+            var dx0=                0;
+            var dy0=                0;
+            var dx1=                director.width;
+            var dy1=                director.height;
+
+            var i;
+
+            var bounds=[
+                    dx0,dy0,
+                    dx1,dy0,
+                    dx1,dy1,
+                    dx0,dy1,
+                    dx0,dy0
+                ];
+            for( i=0; i<4; i++ )    {
+                var actor0= new CAAT.B2DPolygonBody().createBody(
+                    world,
+                    {
+                        bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
+                        density:    1.2,
+                        friction:   1,
+                        restitution:1,
+                        polygonType:CAAT.B2DPolygonBody.Type.EDGE,
+                        bodyDef:    [
+                            {x: bounds[i*2  ],  y: bounds[i*2+1] },
+                            {x: bounds[i*2+2],  y: bounds[i*2+3] }
+                        ],
+                        userData:   {}
+                    });
+                    scene.addChild(actor0);
+                }
+
+
             var walls = [];
 
             walls.push({ AABB: new CAAT.Rectangle().setBounds(0, 0, director.width, wallThickness) }); // top

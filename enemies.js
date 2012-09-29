@@ -38,6 +38,10 @@ Bullet.prototype = {
     createBody: function(world,params){
         var p = params||this.params;
         return Bullet.superclass.createBody.call(this,world,p);
+    },
+
+    move: function(){
+        console.log(this);
     }
 };
 extend(Bullet,CAAT.B2DPolygonBody);
@@ -90,6 +94,10 @@ Fish.prototype = {
     createBody: function(world,params){
         var p = params ||this.params;
         return Fish.superclass.createBody.call(this,world,p);
+    },
+
+    move: function(){
+        console.log(this);
     }
 };
 extend(Fish, CAAT.B2DPolygonBody);
