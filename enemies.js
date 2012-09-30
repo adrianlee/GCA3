@@ -21,8 +21,8 @@ function Bullet(x,y){
     }
 
     function setVelocity(x,y,speed){
-        var tx = x>this.params.x? 0:1;
-        var theta = Math.atan((y-this.params.y)/(x-this.params.x));
+        var tx = x>0? 0:1;
+        var theta = Math.atan((y)/(x));
         this.worldBody.SetLinearVelocity(
             new Box2D.Common.Math.b2Vec2(
                 speed*Math.cos(tx*Math.PI+theta),
@@ -96,14 +96,13 @@ Knight.prototype = {
         return k;
     },
 
-    move: function(){
+    move: function(x,y){
 
     },
 
     setVelocity: function(x,y,speed){
-        console.log(this.params.x+" "+this.params.y);
         var tx = x>this.params.x? 0:1;
-        var theta = Math.atan((y-this.params.y)/(x-this.params.x));
+        var theta = Math.atan((y)/(x));
         this.worldBody.SetLinearVelocity(
             new Box2D.Common.Math.b2Vec2(
                 speed*Math.cos(tx*Math.PI+theta),
