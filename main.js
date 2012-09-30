@@ -212,7 +212,7 @@
             healthBar.hearts(hero.lives);
             world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
-                text.setText("Level "+level);
+                text.setText("Level "+level+2);
                 text.setAlpha(1.0);
                 console.log("Level: " +level);
                 __nextLevel(this,level);
@@ -588,7 +588,7 @@
        // __setKeys( scene, hero );
         healthBar = new HealthBar(200,450,hero.lives);  
         scene.addChild(healthBar);        
-        __deadScreen.prototype.text.setText("Your score: "+scene.time);
+        __deadScreen.prototype.text.setText("Your level: "+level);
         level = -1;
         director.setScene(2);
     }
