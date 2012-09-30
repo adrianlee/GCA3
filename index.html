@@ -67,7 +67,9 @@
                 //setShape( CAAT.ShapeActor.prototype.SHAPE_CIRCLE ).
                 setBounds(joystickSize/2-subjsSize/2,joystickSize/2-subjsSize/2,subjsSize,subjsSize).
                 setFillStyle('#ffff00').
-                cacheAsBitmap();
+                cacheAsBitmap().
+                setSize(40, 40).
+                setScale(0.7, 0.7);
 
             joystick.addChild(subjs);
 
@@ -392,39 +394,39 @@
 
         function __createLevel( director, scene ) {
 
+            // var dx0=                0;
+            // var dy0=                0;
+            // var dx1=                director.width;
+            // var dy1=                director.height;
 
-            var dx0=                0;
-            var dy0=                0;
-            var dx1=                director.width;
-            var dy1=                director.height;
+            // var i;
 
-            var i;
+            // var bounds=[
+            //     dx0,dy0,
+            //     dx1,dy0,
+            //     dx1,dy1,
+            //     dx0,dy1,
+            //     dx0,dy0
+            // ];
 
-            var bounds=[
-                    dx0,dy0,
-                    dx1,dy0,
-                    dx1,dy1,
-                    dx0,dy1,
-                    dx0,dy0
-                ];
-            for( i=0; i<4; i++ )    {
-                var actor0= new CAAT.B2DPolygonBody().createBody(
-                    world,
-                    {
-                        bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
-                        density:    1.2,
-                        friction:   1,
-                        restitution:1,
-                        polygonType:CAAT.B2DPolygonBody.Type.EDGE,
-                        bodyDef:    [
-                            {x: bounds[i*2  ],  y: bounds[i*2+1] },
-                            {x: bounds[i*2+2],  y: bounds[i*2+3] }
-                        ],
-                        userData:   {}
-                    });
-                    scene.addChild(actor0);
-                }
-
+            // for( i=0; i<4; i++ ) {
+            //     var actor0 = new CAAT.B2DPolygonBody().createBody(
+            //         world,
+            //         {
+            //             bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
+            //             density:    1.2,
+            //             friction:   1,
+            //             restitution:1,
+            //             polygonType:CAAT.B2DPolygonBody.Type.EDGE,
+            //             bodyDef:    [
+            //                 {x: bounds[i*2  ],  y: bounds[i*2+1] },
+            //                 {x: bounds[i*2+2],  y: bounds[i*2+3] }
+            //             ],
+            //             userData:   {}
+            //         }
+            //     );
+            //     scene.addChild(actor0);
+            // }
 
             var walls = [];
 
