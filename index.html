@@ -40,6 +40,7 @@
 
         var enemyContainer;
         var powerUpContainer;
+        var guiContainer;
 
         var keys = [0,0,0,0];
         var prevTime = -1;
@@ -151,32 +152,39 @@
             __start(director,scene);
             CAAT.loop(60);
         }
-        function __menu(scene){
 
+        function __menu(scene){
             __start(scene);
         }
+
         function __start(director,scene) {
-
-
-           // scene.setBackgroundImage(director.getImage('back1'));
-            scene.cacheAsBitmap();
+            // scene.setBackgroundImage(director.getImage('back1'));
+            // scene.cacheAsBitmap();
             world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
             world.SetContinuousPhysics(true);
 
             __createLevel( director, scene );
             //__createHero( scene ,director.getImage('hero'));
-            hero =new Player(scene.width/2,scene.height/2).createBody(world);
-            hero.setFillStyle('#fff');
+            // hero = new Player(scene.width/2,scene.height/2).createBody(world);
+            // hero.setFillStyle('#fff');
+            // scene.addChild(hero);
+
+            hero = new CAAT.Actor().
+                setBackgroundImage(director.getImage('hero'), true).
+                setLocation(400,250).
+                cacheAsBitmap();
             scene.addChild(hero);
+
             __startLevel(director, scene, 1);
             joystickE ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
 
-
             var listener = new Box2D.Dynamics.b2ContactListener;
+
             listener.BeginContact = function(contact){
 
             }
+
             listener.EndContact = function(contact){
                 console.log("end");
                 var a = contact.GetFixtureA().GetBody();
@@ -185,8 +193,8 @@
                 b.SetAngularVelocity(0);
 
             }
-            world.SetContactListener(listener);
 
+            world.SetContactListener(listener);
 
             /* Game Loop */
             scene.onRenderStart= function() {
@@ -197,21 +205,20 @@
             scene.onRenderEnd =  function(time)    {
                 world.DrawDebugData();
 
+                console.log();
+
                 if(enemyContainer.childrenList.length==0 && !levelpause){
-                    console.log("Level: " +level);
+                    console.log("Level: " + level);
                     __nextLevel(this,level);
                     level++;
                     levelpause = true;
-                }else{
+                } else {
                     for(var i=0;i<enemyContainer.childrenList.length;i++){
                         enemyContainer.childrenList[i].move(hero.x,hero.y);
-                    levelpause = false;
+                        levelpause = false;
                     }
                 }
             }
-
-
-
         }
 
         function __setKeys( scene, selected ) {
@@ -257,10 +264,7 @@
                 },
                 null
             );
-
         }
-
-
 
         function addPowerUp(director, scene, item) {
             var obj;
@@ -273,41 +277,13 @@
             }
         }
 
-        function addEnemies(scene, level){
-            for(var i=0;i<1*level;i++){
-                // var t = new Bullet(0,Math.random()*500).createBody(world);s
-                var x, y;
-                if(Math.random()>0.5){
-                y = Math.random()>0.5? 1: scene.height-100;
-                x = Math.random()*scene.width;
-                }else{
-                x = Math.random()>0.5? 1: scene.width-100;
-                y = Math.random()*scene.height;
-                }
-
-                var t = new Boomer(x, y).createBody(world);
-
-                enemy.push(t);
-
-
-                window.t = t;
-                enemyContainer.addChild(t);
-                //Set the direction of the bullets here
-                //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
-
-                t.setVelocity(hero.x-x,hero.y-y,2);
-
-                window.t=t;
-
-                t.setFrameTime( scene.time, t.lifespan );
-            }
-        }
-
         function __enemySpawner(scene, timeline) {
             var enemySpawned;
             enemySpawned = timeline.shift();
 
             var levelDuration = 10000;
+
+            var clevel = level;
 
             scene.createTimer(
                 scene.time,
@@ -336,10 +312,19 @@
                                     t = new Bullet(x, y).createBody(world);
                                     break;
                                 case 1:
+                                    t = new Boomer(x, y).createBody(world);
+                                    break;
+                                case 2:
+                                    t = new Ghost(x, y).createBody(world);
+                                    break;
+                                case 3:
+                                    t = new DumbGhost(x, y).createBody(world);
+                                    break;
+                                case 4:
                                     t = new Knight(x, y).createBody(world);
                                     break;
                                 default:
-                                    t = new Bullet(x, y).createBody(world);
+                                    t = new Knight(x, y).createBody(world);
                             }
 
                             enemy.push(t);
@@ -348,18 +333,13 @@
                             t.setVelocity(hero.x-x,hero.y-y,2);
                             t.setFrameTime( scene.time, t.lifespan );
 
-                            console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime);
+                            console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime + " clevel " + clevel);
                             enemySpawned = timeline.shift();
                         }
                     }
                 },
                 null
             );
-
-            // while (timeline) {
-            //     enemySpawned = timeline.pop();
-
-            // }
         }
 
         function __cleanUpLevel() {
@@ -423,10 +403,10 @@
                 enemy.length = 0;
                 powerup.length = 0;
 
+                // generate timeline
                 var timeline = __generateLevel();
 
-                // spawn enemies
-                // addEnemies(scene, level);
+                // consume timeline & spawn enemies
                 __enemySpawner(scene, timeline);
 
                 this.cancel();
@@ -448,9 +428,9 @@
             // Create container for holding enemies
             enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
             powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+            guiContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
 
             // Randomly generate enemies based on level, addChild to container
-            addEnemies(enemyContainer,scene,level);
             addPowerUp(director, scene);
 
             // add container to scene
@@ -462,20 +442,24 @@
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
                     var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
-                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero+1, hero.width+1, hero.height+1) );
+                    // var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero.y-1, hero.width+1, hero.height+1) );
+                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
                     // console.log(collide);
 
-                    if ( collide.length >0 ) {
+                    if ( collide.length ) {
 
                         // collision with enemies.
                         director.audioPlay("audio_1");
-                        if (!hero.die()){
-                            console.log('Game Over!');
-                        }else{
-                            console.log('You have '+hero.lives+' lives remaining');
-                        }
 
+                        // if (!hero.die()){
+                        //     console.log('Game Over!');
+                        // }else{
+                        //     console.log('You have '+hero.lives+' lives remaining');
+                        // }
 
+                        enemy.removeByValue(collide[0]);
+                        // collide[0].setVisible(false);
+                        enemyContainer.removeChild(collide[0]);
                     }
                 },
             null);
@@ -494,7 +478,6 @@
                         // collision with power ups.
                         director.audioPlay("audio_2");
                         console.log("powerup!");
-                        console.log(collide[0].pickup());
                     }
                 },
             null);

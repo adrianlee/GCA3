@@ -3,8 +3,8 @@ function Player(x,y){
   Player.superclass.constructor.call(this);
   this.params = {
     bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
-    x: 400,
-    y: 400,
+    x: x || 400,
+    y: y || 250,
     density:    1.2,
     friction:   1,
     restitution: 0.5,

@@ -2,7 +2,7 @@
 
 function Bullet(x,y){
     Bullet.superclass.constructor.call(this);
-    this.lifespan = 1000;
+    this.lifespan = 10000;
     this.params= {
         bodyType:   Box2D.Dynamics.b2Body.b2_dynamicBody,
         x: x||100,
@@ -16,7 +16,7 @@ function Bullet(x,y){
             {x: 0,  y: 0 },
             {x: 10,  y: 30 }
         ],
-        userData:   {}
+        userData: {}
     };
 
 
@@ -81,6 +81,7 @@ Boomer.prototype = {
         for(var i=0;i<8;i++){
             var b = new Bullet(this.x,this.y).createBody(this.world);
             this.parent.addChild(b);
+            enemy.push(b);
             b.setVelocity(array[i],array[(i+6)%8],10);
             b.setFrameTime(this.time,1000);
         }
@@ -91,7 +92,7 @@ extend(Boomer,Bullet);
 /* Knight - Homing */
 function Knight(x, y) {
     Knight.superclass.constructor.call(this);
-    this.lifespan = 2000;
+    this.lifespan = 10000;
     this.params= {
         bodyType:   Box2D.Dynamics.b2Body.b2_dynamicBody,
         x: x || 100,
@@ -140,7 +141,7 @@ Knight.prototype = {
 
     move: function(x,y){
         var vel = this.worldBody.GetLinearVelocity();
-        
+
         this.setVelocity(vel.x+(x-this.x)/this.homeFactor,vel.y+(y-this.y)/this.homeFactor,5);
     },
 
