@@ -52,8 +52,9 @@
         var text;
         var level=1;
         var currentLevel;
-        var joystickE = true;
+        var levelDuration = window.levelDuration = 10000;
 
+        var joystickE = true;
         var joystickSize = 150;
         var levelpause = false;
 
@@ -227,7 +228,7 @@
 
                     for(var i=0;i<enemyContainer.childrenList.length;i++){
                         enemyContainer.childrenList[i].move(hero.x,hero.y);
-                    
+
                     }
                 }
             }
@@ -317,7 +318,7 @@
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
 
-                t.setVelocity(hero.x-x,hero.y-y,2);
+                t.setVelocity(hero.x-x,hero.y-y,1);
 
                 window.t=t;
 
@@ -329,7 +330,6 @@
             var enemySpawned;
             enemySpawned = timeline.shift();
 
-            var levelDuration = 10000;
             var clevel = level;
             currentLevel = scene.createTimer(
                 scene.time,
@@ -368,7 +368,7 @@
                             enemy.push(t);
                             enemyContainer.addChild(t);
 
-                            t.setVelocity(hero.x-x,hero.y-y,2);
+                            t.setVelocity(hero.x-x,hero.y-y,1);
                             t.setFrameTime( scene.time, t.lifespan );
 
                             console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime+ " "+clevel);
@@ -378,7 +378,7 @@
                 },
                 function(){console.log("canceled "+level);levelpause = false;level--;}
             );
-          
+
 
             // while (timeline) {
             //     enemySpawned = timeline.pop();
@@ -483,10 +483,10 @@
 
 
             // collision detectiob, enemy
-       
+
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
-                     
+
                     var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
                     var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero.y+1, hero.width+1, hero.height+1) );
                     // console.log(collide);
@@ -562,7 +562,7 @@
             }
         }
         function __gameOver(director){
-            
+
             currentLevel.cancel();
             enemyContainer.destroy();
             powerUpContainer.destroy();
