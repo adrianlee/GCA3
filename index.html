@@ -123,7 +123,7 @@
                     setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
 
             CAAT.currentDirector = director;
-
+            CAAT.PMR = director.width / 10;
             // Preload audio and images!
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
@@ -180,6 +180,7 @@
 
             scene.onRenderEnd =  function(time)    {
                 world.DrawDebugData();
+
                 if(enemyContainer.childrenList.length==0 && !levelpause){
                     console.log("Level: " +level);
                     __nextLevel(this,level);
@@ -278,7 +279,7 @@
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
 
-                t.setVelocity(hero.x-x,hero.y-y,10);
+                t.setVelocity(hero.x-x,hero.y-y,2);
                 window.t=t;
                 t.addListener({
                     actorLifeCycleEvent : function(actor, event, time) {
@@ -290,7 +291,7 @@
                         }
                     }
                 });
-                t.setFrameTime( scene.time, 1000 );
+                t.setFrameTime( scene.time, 2000 );
             }
         }
 
