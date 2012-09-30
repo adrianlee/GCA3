@@ -137,7 +137,7 @@ Knight.prototype = {
     move: function(x,y){
         var vel = this.worldBody.GetLinearVelocity();
 
-        this.setVelocity(vel.x+(x-this.x)/this.homeFactor,vel.y+(y-this.y)/this.homeFactor,3);
+        this.setVelocity(this.x+(x-this.x)*this.homeFactor,this.y+(y-this.y)*this.homeFactor,3);
     },
 
     setVelocity: function(x,y,speed){
@@ -162,7 +162,7 @@ function Ghost(x,y){
     Ghost.superclass.constructor.call(this,x,y);
     this.setAlpha(0.20);
     this.cacheAsBitmap();
-    this.homeFactor = 500;
+    this.homeFactor = 5;
 }
 
 extend(Ghost,Knight);
