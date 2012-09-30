@@ -17,7 +17,7 @@
     var world;
     var wallThickness = 5;
     var text;
-    var level=-1;
+    var level=2;
     var currentLevel;
     var levelDuration = window.levelDuration = 10000;
 
@@ -233,7 +233,7 @@
         button.touchStart = function( e ) {
             director.setScene(0);
         };
-        
+
 
         button.setAsButton(director.getImage('start'),0,0,0,0,function(){
             director.setScene(0);
@@ -419,10 +419,10 @@
                         var x, y;
 
                         if (Math.random() > 0.5){
-                            y = Math.random() > 0.5 ? 1 : scene.height - 100;
+                            y = Math.random() > 0.5 ? 1 : scene.height;
                             x = Math.random() * scene.width;
                         } else {
-                            x = Math.random() > 0.5 ? 1 : scene.width - 100;
+                            x = Math.random() > 0.5 ? 1 : scene.width;
                             y = Math.random() * scene.height;
                         }
 
@@ -451,7 +451,7 @@
                         enemy.push(t);
                         enemyContainer.addChild(t);
 
-                        t.setVelocity(hero.x-x,hero.y-y,7);
+                        t.setVelocity(hero.x-x,hero.y-y,3);
                         t.setFrameTime( scene.time, t.lifespan );
 
                         console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime+ " "+clevel);

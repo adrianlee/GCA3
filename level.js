@@ -1,6 +1,6 @@
 var levelJSON = [];
 
-var sample = {
+var level = {
     enemy: [
         {
             type: 0,
@@ -11,21 +11,6 @@ var sample = {
             type: 1,
             amount: 1,
             interpolation: 0
-        },
-        {
-            type: 2,
-            amount: 0,
-            interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 0,
-            interpolation: 0
-        },
-        {
-            type: 4,
-            amount: 0,
-            interpolation: 0
         }
     ],
     background: 'tile',
@@ -33,46 +18,31 @@ var sample = {
     powerup: 5
 };
 
-var sample2 = {
+var level2 = {
     enemy: [
         {
             type: 0,
-            amount: 0,
-            interporlation: 0
-        },
-        {
-            type: 1,
-            amount: 3,
+            amount: 4,
             interpolation: 0
         }
     ]
 };
 
-var sample3 = {
+var level3 = {
     enemy: [
         {
             type: 0,
-            amount: 0,
+            amount: 4,
             interporlation: 0
         },
         {
-            type: 1,
-            amount: 0,
-            interpolation: 0
-        },
-        {
             type: 2,
-            amount: 2,
+            amount: 1,
             interpolation: 0
         },
         {
             type: 3,
-            amount: 2,
-            interpolation: 0
-        },
-        {
-            type: 4,
-            amount: 0,
+            amount: 1,
             interpolation: 0
         }
     ],
@@ -81,7 +51,7 @@ var sample3 = {
     powerup: 5
 };
 
-var sample4 = {
+var level4 = {
     enemy: [
         {
             type: 0,
@@ -114,7 +84,7 @@ var sample4 = {
     powerup: 5
 };
 
-var sample5 = {
+var level5 = {
     enemy: [
         {
             type: 0,
@@ -146,7 +116,7 @@ var sample5 = {
     music: 'main',
     powerup: 5
 };
-var sample6 = {
+var level6 = {
     enemy: [
         {
             type: 0,
@@ -178,7 +148,7 @@ var sample6 = {
     music: 'main',
     powerup: 5
 };
-var sample7 = {
+var level7 = {
     enemy: [
         {
             type: 0,
@@ -211,7 +181,7 @@ var sample7 = {
     powerup: 5
 };
 
-var sample8 = {
+var level8 = {
     enemy: [
         {
             type: 0,
@@ -243,7 +213,7 @@ var sample8 = {
     music: 'main',
     powerup: 5
 };
-var sample9 = {
+var level9 = {
     enemy: [
         {
             type: 0,
@@ -276,7 +246,7 @@ var sample9 = {
     powerup: 5
 };
 
-var sample10 = {
+var level10 = {
     enemy: [
         {
             type: 0,
@@ -309,7 +279,7 @@ var sample10 = {
     powerup: 5
 };
 
-var sample11 = {
+var level11 = {
     enemy: [
         {
             type: 0,
@@ -343,7 +313,7 @@ var sample11 = {
 };
 
 
-var sample12 = {
+var level12 = {
     enemy: [
         {
             type: 0,
@@ -376,7 +346,7 @@ var sample12 = {
     powerup: 5
 };
 
-var sample13 = {
+var level13 = {
     enemy: [
         {
             type: 0,
@@ -409,7 +379,7 @@ var sample13 = {
     powerup: 5
 };
 
-var sample14 = {
+var level14 = {
     enemy: [
         {
             type: 0,
@@ -442,7 +412,7 @@ var sample14 = {
     powerup: 5
 };
 
-var sample15 = {
+var level15 = {
     enemy: [
         {
             type: 0,
@@ -475,7 +445,7 @@ var sample15 = {
     powerup: 5
 };
 
-var sample16 = {
+var level16 = {
     enemy: [
         {
             type: 0,
@@ -508,7 +478,7 @@ var sample16 = {
     powerup: 5
 };
 
-var sample17 = {
+var level17 = {
     enemy: [
         {
             type: 0,
@@ -541,7 +511,7 @@ var sample17 = {
     powerup: 5
 };
 
-var sample18 = {
+var level18 = {
     enemy: [
         {
             type: 0,
@@ -574,7 +544,7 @@ var sample18 = {
     powerup: 5
 };
 
-var sample19 = {
+var level19 = {
     enemy: [
         {
             type: 0,
@@ -607,7 +577,7 @@ var sample19 = {
     powerup: 5
 };
 
-var sample20 = {
+var level20 = {
     enemy: [
         {
             type: 0,
@@ -642,23 +612,23 @@ var sample20 = {
 
 
 
-levelJSON.push(sample);
-levelJSON.push(sample2);
-levelJSON.push(sample3);
-levelJSON.push(sample4);
-levelJSON.push(sample5);
-levelJSON.push(sample6);
-levelJSON.push(sample7);
-levelJSON.push(sample8);
-levelJSON.push(sample9);
-levelJSON.push(sample10);
-levelJSON.push(sample11);
-levelJSON.push(sample12);
-levelJSON.push(sample13);
-levelJSON.push(sample14);
-levelJSON.push(sample15);
-levelJSON.push(sample16);
-levelJSON.push(sample17);
-levelJSON.push(sample18);
-levelJSON.push(sample19);
-levelJSON.push(sample20);
+levelJSON.push(level);
+levelJSON.push(level2);
+levelJSON.push(level3);
+levelJSON.push(level4);
+levelJSON.push(level5);
+levelJSON.push(level6);
+levelJSON.push(level7);
+levelJSON.push(level8);
+levelJSON.push(level9);
+levelJSON.push(level10);
+levelJSON.push(level11);
+levelJSON.push(level12);
+levelJSON.push(level13);
+levelJSON.push(level14);
+levelJSON.push(level15);
+levelJSON.push(level16);
+levelJSON.push(level17);
+levelJSON.push(level18);
+levelJSON.push(level19);
+levelJSON.push(level20);
