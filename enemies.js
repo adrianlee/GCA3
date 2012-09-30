@@ -147,7 +147,7 @@ Knight.prototype = {
         this.worldBody.SetLinearVelocity(
             new Box2D.Common.Math.b2Vec2(
                 speed*Math.cos(tx*Math.PI+theta),
-                speed*Math.sin(ty*Math.PI+theta) ));
+                speed*Math.sin(tx*Math.PI+theta) ));
          //this.worldBody.SetAngle(theta+(tx-0.5)*Math.PI);
         return this;
     }

@@ -300,7 +300,7 @@
             if(enemyContainer.childrenList.length==0 && !levelpause){
                 text.setText("Level "+(level+2));
                 text.setAlpha(1.0);
-
+                window.hero = hero;
                 console.log("Level: " + (level+2));
                 __nextLevel(director, this,level);
 

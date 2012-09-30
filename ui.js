@@ -24,6 +24,7 @@ extend(HealthBar,CAAT.ActorContainer);
 function Heart(x,y){
   Heart.superclass.constructor.call(this);
   this.setBounds(x,y,50,50);
+  this.cacheAsBitmap(); 
   this.setBackgroundImage(this.image);
 }
 extend(Heart,CAAT.Actor);
