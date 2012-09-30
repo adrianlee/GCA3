@@ -1,9 +1,21 @@
-GCA3
-====
+Team Members
+============
+Adrian Lee
+adrian.lee@mail.mcgill.ca
+McGill
 
-GCA3
+Xavier Denis
+xavier.denis@mail.mcgill.ca
+McGill
+
+Nick Morrill
+nmorrill2@gmail.com
 
 
-move joystick into joystick.js
+Ray Guirguess
+rayguirguess@yahoo.com
 
-sprite image
+
+Instructions & How To
+=====================
+
