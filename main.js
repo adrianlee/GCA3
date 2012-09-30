@@ -244,13 +244,13 @@
         scene.addChild(button);
     }
     function __start(director,scene) {
-
+                var actor = new CAAT.Actor().setBackgroundImage(director.getImage('background'));
+        scene.addChild(actor);
         text = new CAAT.TextActor().calcTextSize(director).setFont('100px BM harry').setAlpha(1.0);
         text.setLocation(scene.width/2-150,scene.height/2-100);
         scene.addChild(text);
         scene.setFillStyle('#000');
-        var actor = new CAAT.Actor().setBackgroundImage(director.getImage('background'));
-        scene.addChild(actor);
+
        // scene.setBackgroundImage(director.getImage('back1'));
         scene.cacheAsBitmap();
         world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
