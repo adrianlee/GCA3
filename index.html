@@ -99,6 +99,11 @@
         }
 
         function __preload() {
+            var director = new CAAT.Director().
+                initialize( 800,500, document.getElementById('experiment-canvas') ).
+                setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
+            CAAT.currentDirector = director;
+            CAAT.PMR = director.width / 10;
             new CAAT.ImagePreloader().loadImages(
                 [
                     { id:'bomb', url:'Image/Powerups/bomb.png'},
@@ -113,28 +118,21 @@
                 ],
                 function( count, images ) {
                     if (count === images.length) {
-                        __start(images);
+                        __setup(director,images);
                     }
                 }
             );
-        }
 
-        function __start(images) {
-            var director = new CAAT.Director().
-                    initialize( 800,500, document.getElementById('experiment-canvas') ).
-                    setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
-
-            CAAT.currentDirector = director;
-            CAAT.PMR = director.width / 10;
-            // Preload audio and images!
+                        // Preload audio and images!
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
                 addAudio("audio_2", document.getElementById('audio_2')).
                 addAudio("audio_3", document.getElementById('audio_3')).
                 addAudio("music_1", document.getElementById('music_1'));
+        }
 
+        function __setup(director,images){
             director.setImagesCache(images);
-
             PowerUp.prototype.bomb = director.getImage('bomb');
             PowerUp.prototype.mushroom = director.getImage('mushroom');
             Bullet.prototype.image = director.getImage('bullet');
@@ -143,10 +141,23 @@
             Ghost.prototype.image = director.getImage('ghost');
             joystick.setBackgroundImage(director.getImage('joypad'));
             subjs.setBackgroundImage(director.getImage('joystick'));
-            // Create Scene
+
             var scene = director.createScene();
             scene.setBounds(0,0,800,500);
             scene.setFillStyle('#000');
+            var scene2 = director.createScene();
+            director.setScene(0);
+           // __menu(scene2);
+            __start(director,scene);
+            CAAT.loop(60);
+        }
+        function __menu(scene){
+
+            __start(scene);
+        }
+        function __start(director,scene) {
+
+
            // scene.setBackgroundImage(director.getImage('back1'));
             scene.cacheAsBitmap();
             world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
@@ -200,7 +211,7 @@
             }
 
 
-            CAAT.loop(60);
+
         }
 
         function __setKeys( scene, selected ) {
@@ -409,6 +420,16 @@
             collision = new CAAT.QuadTree().create(0, 0, director.width, director.height, walls);
         }
 
-       
+        function __cleanUp(){
+            if(hero.die()){
+                enemyContainer.emptyChildren();
+                //start level again
+            }else{
+                __gameOver();
+            }
+        }
+        function __gameOver(){
+
+        }
     })();
 </script>
