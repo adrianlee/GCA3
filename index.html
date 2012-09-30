@@ -27,7 +27,7 @@
 <audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
 
 <img src='Image/Units/BadGuy.png' preload='auto' id='sprite_1'></img>
-<img src='Image/Units/Fish.png' preload='auto' id='sprite_2'></img>
+<img src='Image/Projectiles/Random_Projectile2.png' preload='auto' id='sprite_1'></img>
 
 <script>
     (function() {
@@ -98,7 +98,8 @@
             new CAAT.ImagePreloader().loadImages(
                 [
                     { id:'bomb', url:'Image/Powerups/bomb.png'},
-                    { id:'mushroom', url:'Image/powerups/Mushroom.png'}
+                    { id:'mushroom', url:'Image/powerups/Mushroom.png'},
+                    { id:'bullet', url:'Image/Projectiles/Random_Projectile2.png'}
                 ],
                 function( count, images ) {
                     if (count === images.length) {
@@ -126,6 +127,7 @@
             director.setImagesCache(images);
             PowerUp.prototype.bomb = director.getImage('bomb');
             PowerUp.prototype.mushroom = director.getImage('mushroom');
+            Bullet.prototype.image = director.getImage('bullet');
 
             // Create Scene
             var scene = director.createScene();
@@ -280,7 +282,7 @@
                 y = Math.random()*scene.height;
                 }
 
-                var t = new Knight(x, y).createBody(world);
+                var t = new Bullet(x, y).createBody(world);
 
                 enemy.push(t);
 
@@ -301,7 +303,7 @@
                         }
                     }
                 });
-                t.setFrameTime( scene.time, 7500 );
+                t.setFrameTime( scene.time, 1000 );
             }
         }
 
