@@ -4,13 +4,28 @@ var sample = {
     enemy: [
         {
             type: 0,
-            amount: 20,
+            amount: 1,
             interporlation: 0
         },
         {
-            type: 0,
-            amount: 5,
-            interpolation: 1
+            type: 1,
+            amount: 1,
+            interpolation: 0
+        },
+        {
+            type: 2,
+            amount: 1,
+            interpolation: 0
+        },
+        {
+            type: 3,
+            amount: 1,
+            interpolation: 0
+        },
+        {
+            type: 4,
+            amount: 1,
+            interpolation: 0
         }
     ],
     background: 'tile',
@@ -28,7 +43,7 @@ var sample2 = {
         {
             type: 1,
             amount: 8,
-            interpolation: 1
+            interpolation: 0
         }
     ]
 };

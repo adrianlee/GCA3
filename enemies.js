@@ -108,10 +108,6 @@ function Knight(x, y) {
         userData: {}
     };
 
-
-
-    this.setBackgroundImage( new CAAT.SpriteImage().initialize(document.getElementById('sprite_1'), 1, 1), true );
-    this.setAnimationImageIndex( [0,1,2,1] );
     this.homeFactor = 10;
 
     // this.createBody = createBody;
