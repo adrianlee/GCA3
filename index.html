@@ -63,8 +63,8 @@
                 cacheAsBitmap();
 
             var subjsSize = joystickSize/5;
-            var subjs = new CAAT.ShapeActor().
-                setShape( CAAT.ShapeActor.prototype.SHAPE_CIRCLE ).
+            var subjs = new CAAT.Actor().
+                //setShape( CAAT.ShapeActor.prototype.SHAPE_CIRCLE ).
                 setBounds(joystickSize/2-subjsSize/2,joystickSize/2-subjsSize/2,subjsSize,subjsSize).
                 setFillStyle('#ffff00').
                 cacheAsBitmap();
@@ -100,7 +100,10 @@
                 [
                     { id:'bomb', url:'Image/Powerups/bomb.png'},
                     { id:'mushroom', url:'Image/powerups/Mushroom.png'},
-                    { id:'bullet', url:'Image/Projectiles/Random_Projectile2.png'}
+                    { id:'bullet', url:'Image/Projectiles/Random_Projectile2_Rotated.png'},
+                    { id:'joypad', url:'Image/Interface/Outer_Square.png'},
+                    { id:'joystick',url:'Image/Interface/Inner_Square50px.png'},
+                    { id:'hero', url:'Image/Units/Human.png'}
                 ],
                 function( count, images ) {
                     if (count === images.length) {
@@ -129,7 +132,8 @@
             PowerUp.prototype.bomb = director.getImage('bomb');
             PowerUp.prototype.mushroom = director.getImage('mushroom');
             Bullet.prototype.image = director.getImage('bullet');
-
+            joystick.setBackgroundImage(director.getImage('joypad'));
+            subjs.setBackgroundImage(director.getImage('joystick'));
             // Create Scene
             var scene = director.createScene();
             scene.setFillStyle( '#000' );
@@ -138,7 +142,7 @@
             world.SetContinuousPhysics(true);
 
             __createLevel( director, scene );
-            __createHero( scene );
+            __createHero( scene ,director.getImage('hero'));
             __startLevel(director, scene, 1);
             joystickE ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
@@ -238,7 +242,7 @@
         }
 
 
-        function __createHero( scene ) {
+        function __createHero( scene,image ) {
             var size= 25;
 
             hero = new CAAT.B2DPolygonBody().createBody(world,{
@@ -248,10 +252,11 @@
                 density:    1.2,
                 friction:   1,
                 restitution: 0.5,
+                image: image,
                 polygonType:CAAT.B2DPolygonBody.Type.BOX,
                 bodyDef:    [
                     {x: 0,  y: 0 },
-                    {x: 10,  y: 10 }
+                    {x: 50,  y: 50 }
                 ],
                 userData:   {}
             });
@@ -309,7 +314,7 @@
         }
 
         function __nextLevel(level){
-            scene.createTimer(scene.time+300,1,null,function(time,ttime,timerTask){
+            scene.createTimer(scene.time+3000,1,function(time,ttime,timerTask){
                 // empty array
                 enemy.length = 0;
                 powerup.length = 0;
@@ -317,7 +322,7 @@
                 // spawn enemies
                 addEnemies(enemyContainer,scene,level);
                 this.cancel();
-            },null)
+            },null,null);
 
         }
 
