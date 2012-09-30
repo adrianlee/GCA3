@@ -147,13 +147,14 @@
             scene.setBounds(0,0,800,500);
             scene.setFillStyle('#000');
             var scene2 = director.createScene();
+            scene2.setBounds(0,0,800,500);
             director.setScene(0);
-           // __menu(scene2);
+           __menu(scene2);
             __start(director,scene);
             CAAT.loop(60);
         }
         function __menu(scene){
-
+            scene.setFillStyle('#fff');
         }
         function __start(director,scene) {
 
@@ -464,7 +465,7 @@
                 function(time, ttime, timerTask) {
                      
                     var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
-                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero+1, hero.width+1, hero.height+1) );
+                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero.y+1, hero.width+1, hero.height+1) );
                     // console.log(collide);
 
                     if ( collide.length >0 ) {
@@ -538,10 +539,11 @@
             }
         }
         function __gameOver(director){
-            director.setScene(1);
+            
             currentLevel.cancel();
             enemyContainer.destroy();
             powerUpContainer.destroy();
+            director.setScene(1);
         }
     })();
 </script>
