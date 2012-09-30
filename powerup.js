@@ -5,9 +5,11 @@ function PowerUp(x, y, item) {
     switch (item) {
         case 0:
             img = this.bomb;
+            this.setScale(0.7, 0.7);
             break;
         case 1:
             img = this.mushroom;
+            this.setScale(0.6, 0.6);
             break;
         default:
             img = this.bomb;
@@ -15,7 +17,7 @@ function PowerUp(x, y, item) {
 
     this.setBackgroundImage( img, true );
     this.setLocation(x, y);
-    this.setScale(0.7, 0.7);
+
     // console.log(window.scene);
     // window.scene.createTimer(
     //     0,

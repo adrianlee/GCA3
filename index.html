@@ -73,13 +73,14 @@
 
             joystick.mouseMove = function(e){
                 var child = this.childrenList[0];
-
                     e.point.x < subjsSize-5 ? e.point.x = subjsSize-5 : e.point.x;
                     e.point.x > joystickSize-subjsSize+5 ? e.point.x = joystickSize-subjsSize+5 : e.point.x;
                     e.point.y < subjsSize-5 ? e.point.y = subjsSize-5 : e.point.y;
                     e.point.y > joystickSize-subjsSize+5 ? e.point.y = joystickSize-subjsSize+5 : e.point.y;
 
                     child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2);
+                    // child.moveTo(e.point.x - child.width/2, e.point.y - child.height/2, 5);
+
                     this.joy_x = e.point.x - this.width/2;
                     this.joy_y = e.point.y - this.height/2;
                 };
