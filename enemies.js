@@ -142,11 +142,12 @@ Knight.prototype = {
 
     setVelocity: function(x,y,speed){
         var tx = x>this.params.x? 0:1;
+        var ty = y>this.params.y? 0:1;
         var theta = Math.atan((y)/(x));
         this.worldBody.SetLinearVelocity(
             new Box2D.Common.Math.b2Vec2(
                 speed*Math.cos(tx*Math.PI+theta),
-                speed*Math.sin(tx*Math.PI+theta) ));
+                speed*Math.sin(ty*Math.PI+theta) ));
          //this.worldBody.SetAngle(theta+(tx-0.5)*Math.PI);
         return this;
     }
@@ -162,6 +163,8 @@ function Ghost(x,y){
     this.setAlpha(0.20);
     this.cacheAsBitmap();
     this.homeFactor = 500;
+
+    this.homeFactor = 50;
 }
 
 extend(Ghost,Knight);

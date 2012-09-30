@@ -16,7 +16,10 @@ function Player(x,y){
     ],
     userData:   {}
   };
+<<<<<<< HEAD
 
+=======
+>>>>>>> a65e403478ae5b6b7938b5871934498cbb4fdd0e
   this.lives = 3;
   return this;
 }
