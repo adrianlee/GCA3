@@ -4,7 +4,7 @@ var sample = {
     enemy: [
         {
             type: 0,
-            amount: 5,
+            amount: 20,
             interporlation: 0
         },
         {

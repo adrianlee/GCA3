@@ -102,7 +102,7 @@
                 [
                     { id:'bomb', url:'Image/Powerups/bomb.png'},
                     { id:'mushroom', url:'Image/powerups/Mushroom.png'},
-                    { id:'bullet', url:'Image/Projectiles/Random_Projectile2_Rotated.png'},
+                    // { id:'bullet', url:'Image/Projectiles/Random_Projectile2_Rotated.png'},
                     { id:'joypad', url:'Image/Interface/Outer_Square.png'},
                     { id:'joystick',url:'Image/Interface/Inner_Square50px.png'},
                     { id:'hero', url:'Image/Units/Human.png'},
@@ -256,7 +256,7 @@
             }
         }
 
-        function addEnemies(container,scene,level){
+        function addEnemies(scene, level){
             for(var i=0;i<1*level;i++){
                 // var t = new Bullet(0,Math.random()*500).createBody(world);s
                 var x, y;
@@ -279,7 +279,6 @@
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
 
                 t.setVelocity(hero.x-x,hero.y-y,2);
-                window.t=t;
                 t.addListener({
                     actorLifeCycleEvent : function(actor, event, time) {
                         if (event === 'expired') {
@@ -294,7 +293,84 @@
             }
         }
 
-        function __generateLevel() {
+        function __enemySpawner(scene, timeline) {
+            var enemySpawned;
+            enemySpawned = timeline.shift();
+
+            var levelDuration = 10000;
+
+            scene.createTimer(
+                scene.time,
+                levelDuration,
+                function(time, ttime, timerTask) {
+                    console.log("level ended!")
+                },
+                function(time, ttime, timerTask) {
+                    if (enemySpawned && !!enemySpawned.time) {
+                        if (enemySpawned.time * levelDuration <= ttime) {
+                            // spawn
+                            var x, y;
+
+                            if (Math.random() > 0.5){
+                                y = Math.random() > 0.5 ? 1 : scene.height - 100;
+                                x = Math.random() * scene.width;
+                            } else {
+                                x = Math.random() > 0.5 ? 1 : scene.width - 100;
+                                y = Math.random() * scene.height;
+                            }
+
+                            var t;
+
+                            switch(enemySpawned.type) {
+                                case 0:
+                                    t = new Bullet(x, y).createBody(world);
+                                    break;
+                                case 1:
+                                    t = new Knight(x, y).createBody(world);
+                                    break;
+                                default:
+                                    t = new Bullet(x, y).createBody(world);
+                            }
+
+                            enemy.push(t);
+                            enemyContainer.addChild(t);
+
+                            t.setVelocity(hero.x-x,hero.y-y,2);
+
+                            t.addListener({
+                                actorLifeCycleEvent : function(actor, event, time) {
+                                    if (event === 'expired') {
+                                        var body = actor.worldBody;
+                                        world.DestroyBody(body);
+                                        actor.destroy();
+                                        enemy.removeByValue(actor);
+                                    }
+                                }
+                            });
+                            t.setFrameTime( scene.time, 2000 );
+
+                            console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime);
+                            enemySpawned = timeline.shift();
+                        }
+                    }
+                },
+                null
+            );
+
+            // while (timeline) {
+            //     enemySpawned = timeline.pop();
+
+            // }
+        }
+
+        function __cleanUpLevel() {
+            // emptyContainer
+            // empty arrays
+        }
+
+        function __generateLevel(scene) {
+            var timeline = [];
+
             var parseLevel,
                 parseEnemy,
                 levelJSONLength = levelJSON.length;
@@ -303,30 +379,57 @@
             // levelJSON[level] ? parseLevel = levelJSON[level]  : levelJSON[level%levelJSONLength];
             parseLevel = levelJSON[level%levelJSONLength];
 
-            console.log(parseLevel.enemy);
-
             // calculate interpolation
             for (var o=0; o < parseLevel.enemy.length;o++) {
                 parseEnemy = parseLevel.enemy[o];
-                for (obj in parseEnemy) {
-                    console.log(obj + " " + parseEnemy[obj]);
+
+                // console.log(parseEnemy.type)
+                // console.log(parseEnemy.amount)
+                // console.log(parseEnemy.interpolation)
+
+                // Time. value between 0 to 1
+                for (var i =0; i < parseEnemy.amount; i++) {
+                    var obj = new Object();
+                    obj.type = parseEnemy.type;
+                    obj.time = Math.random(); // random
+                    // obj.time = 1 / i; // linear
+                    timeline.push(obj);
                 }
+
+                // console.log(obj + " " + parseEnemy[obj]);
+                // type
+                // amount
+                // interp
+                // map to R (linearly);
             }
 
-            // generate spawn times
-            console.log("spawn");
+            // createLinearInterpolator(bPingPong, bInverse)
+            // var o = new CAAT.Interpolator().createLinearInterpolator(false, false);
+            // createExponentialOutInterpolator(exponent, bPingPong)
+            // var j = new CAAT.Interpolator().createExponentialOutInterpolator(2, true);            console.log(o.getPosition());
+
+            // sort timeline by time.
+            timeline.sort(function(obj1, obj2) {
+                return obj1.time - obj2.time;
+            });
+
+            console.log(timeline);
+
+            return timeline;
         }
 
-        function __nextLevel(scene,level){
+        function __nextLevel(scene, level){
             scene.createTimer(scene.time+3000,1,function(time,ttime,timerTask){
                 // empty array
                 enemy.length = 0;
                 powerup.length = 0;
 
-                __generateLevel();
+                var timeline = __generateLevel();
 
                 // spawn enemies
-                addEnemies(enemyContainer,scene,level);
+                // addEnemies(scene, level);
+                __enemySpawner(scene, timeline);
+
                 this.cancel();
             }, null, null);
 
