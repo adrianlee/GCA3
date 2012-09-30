@@ -81,8 +81,11 @@ Boomer.prototype = {
         for(var i=0;i<8;i++){
             var b = new Bullet(this.x,this.y).createBody(this.world);
             this.parent.addChild(b);
+
             b.setVelocity(array[i],array[(i+6)%8],2);
             b.setFrameTime(this.time,2000);
+
+
         }
         Boomer.superclass.destroy.call(this);
     }
@@ -108,7 +111,7 @@ function Knight(x, y) {
         userData: {}
     };
 
-    this.homeFactor = 10;
+    this.homeFactor = 3;
 
     // this.createBody = createBody;
   //  this.setVelocity = setVelocity;
@@ -162,7 +165,7 @@ function Ghost(x,y){
     Ghost.superclass.constructor.call(this,x,y);
     this.setAlpha(0.20);
     this.cacheAsBitmap();
-    this.homeFactor = 5;
+    this.homeFactor = 500;
 }
 
 extend(Ghost,Knight);

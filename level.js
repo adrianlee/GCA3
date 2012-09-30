@@ -1,16 +1,17 @@
 var levelJSON = [];
 
+// 1 = bullet
+// 2 = knight
+// 3 = Ghost
+// 4 = DumbGhost
+// 5 = Boomer
+
 var level = {
     enemy: [
         {
             type: 0,
             amount: 2,
             interporlation: 0
-        },
-        {
-            type: 1,
-            amount: 1,
-            interpolation: 0
         }
     ],
     background: 'tile',
@@ -39,11 +40,6 @@ var level3 = {
             type: 2,
             amount: 1,
             interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 1,
-            interpolation: 0
         }
     ],
     background: 'tile',
@@ -59,23 +55,8 @@ var level4 = {
             interporlation: 0
         },
         {
-            type: 1,
-            amount: 0,
-            interpolation: 0
-        },
-        {
             type: 2,
             amount: 2,
-            interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 4,
-            amount: 1,
             interpolation: 0
         }
     ],
@@ -88,28 +69,8 @@ var level5 = {
     enemy: [
         {
             type: 0,
-            amount: 0,
+            amount: 7,
             interporlation: 0
-        },
-        {
-            type: 1,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 2,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 4,
-            amount: 1,
-            interpolation: 0
         }
     ],
     background: 'tile',
@@ -120,27 +81,12 @@ var level6 = {
     enemy: [
         {
             type: 0,
-            amount: 2,
+            amount: 1,
             interporlation: 0
         },
         {
-            type: 1,
-            amount: 2,
-            interpolation: 0
-        },
-        {
-            type: 2,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 1,
-            interpolation: 0
-        },
-        {
             type: 4,
-            amount: 1,
+            amount: 3,
             interpolation: 0
         }
     ],
@@ -151,23 +97,8 @@ var level6 = {
 var level7 = {
     enemy: [
         {
-            type: 0,
-            amount: 0,
-            interporlation: 0
-        },
-        {
-            type: 1,
-            amount: 3,
-            interpolation: 0
-        },
-        {
-            type: 2,
-            amount: 0,
-            interpolation: 0
-        },
-        {
             type: 3,
-            amount: 0,
+            amount: 1,
             interpolation: 0
         },
         {
@@ -185,7 +116,7 @@ var level8 = {
     enemy: [
         {
             type: 0,
-            amount: 3,
+            amount: 2,
             interporlation: 0
         },
         {
@@ -205,7 +136,7 @@ var level8 = {
         },
         {
             type: 4,
-            amount: 2,
+            amount: 0,
             interpolation: 0
         }
     ],
@@ -222,22 +153,7 @@ var level9 = {
         },
         {
             type: 1,
-            amount: 0,
-            interpolation: 0
-        },
-        {
-            type: 2,
-            amount: 6,
-            interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 4,
-            amount: 0,
+            amount: 2,
             interpolation: 0
         }
     ],
@@ -337,7 +253,7 @@ var level12 = {
         },
         {
             type: 4,
-            amount: 5,
+            amount: 1,
             interpolation: 0
         }
     ],
@@ -350,7 +266,7 @@ var level13 = {
     enemy: [
         {
             type: 0,
-            amount: 3,
+            amount: 13,
             interporlation: 0
         },
         {
@@ -360,17 +276,17 @@ var level13 = {
         },
         {
             type: 2,
-            amount: 2,
+            amount: 0,
             interpolation: 0
         },
         {
             type: 3,
-            amount: 2,
+            amount: 0,
             interpolation: 0
         },
         {
             type: 4,
-            amount: 1,
+            amount: 0,
             interpolation: 0
         }
     ],
@@ -393,12 +309,12 @@ var level14 = {
         },
         {
             type: 2,
-            amount: 8,
+            amount: 0,
             interpolation: 0
         },
         {
             type: 3,
-            amount: 0,
+            amount: 10,
             interpolation: 0
         },
         {
@@ -416,7 +332,7 @@ var level15 = {
     enemy: [
         {
             type: 0,
-            amount: 2,
+            amount: 5,
             interporlation: 0
         },
         {
@@ -431,7 +347,7 @@ var level15 = {
         },
         {
             type: 3,
-            amount: 4,
+            amount: 5,
             interpolation: 0
         },
         {
@@ -449,7 +365,7 @@ var level16 = {
     enemy: [
         {
             type: 0,
-            amount: 0,
+            amount: 2,
             interporlation: 0
         },
         {
@@ -459,7 +375,73 @@ var level16 = {
         },
         {
             type: 2,
+            amount: 0,
+            interpolation: 0
+        },
+        {
+            type: 3,
             amount: 2,
+            interpolation: 0
+        },
+        {
+            type: 4,
+            amount: 2,
+            interpolation: 0
+        }
+    ],
+    background: 'tile',
+    music: 'main',
+    powerup: 5
+};
+
+var level17 = {
+    enemy: [
+        {
+            type: 0,
+            amount: 5,
+            interporlation: 0
+        },
+        {
+            type: 1,
+            amount: 0,
+            interpolation: 0
+        },
+        {
+            type: 2,
+            amount: 0,
+            interpolation: 0
+        },
+        {
+            type: 3,
+            amount: 5,
+            interpolation: 0
+        },
+        {
+            type: 4,
+            amount: 0,
+            interpolation: 0
+        }
+    ],
+    background: 'tile',
+    music: 'main',
+    powerup: 5
+};
+
+var level18 = {
+    enemy: [
+        {
+            type: 0,
+            amount: 4,
+            interporlation: 0
+        },
+        {
+            type: 1,
+            amount: 0,
+            interpolation: 0
+        },
+        {
+            type: 2,
+            amount: 0,
             interpolation: 0
         },
         {
@@ -478,87 +460,21 @@ var level16 = {
     powerup: 5
 };
 
-var level17 = {
-    enemy: [
-        {
-            type: 0,
-            amount: 3,
-            interporlation: 0
-        },
-        {
-            type: 1,
-            amount: 2,
-            interpolation: 0
-        },
-        {
-            type: 2,
-            amount: 2,
-            interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 4,
-            amount: 0,
-            interpolation: 0
-        }
-    ],
-    background: 'tile',
-    music: 'main',
-    powerup: 5
-};
-
-var level18 = {
-    enemy: [
-        {
-            type: 0,
-            amount: 8,
-            interporlation: 0
-        },
-        {
-            type: 1,
-            amount: 3,
-            interpolation: 0
-        },
-        {
-            type: 2,
-            amount: 1,
-            interpolation: 0
-        },
-        {
-            type: 3,
-            amount: 0,
-            interpolation: 0
-        },
-        {
-            type: 4,
-            amount: 0,
-            interpolation: 0
-        }
-    ],
-    background: 'tile',
-    music: 'main',
-    powerup: 5
-};
-
 var level19 = {
     enemy: [
         {
             type: 0,
-            amount: 1,
+            amount: 2,
             interporlation: 0
         },
         {
             type: 1,
-            amount: 3,
+            amount: 1,
             interpolation: 0
         },
         {
             type: 2,
-            amount: 3,
+            amount: 1,
             interpolation: 0
         },
         {
@@ -581,27 +497,27 @@ var level20 = {
     enemy: [
         {
             type: 0,
-            amount: 5,
+            amount: 4,
             interporlation: 0
         },
         {
             type: 1,
-            amount: 5,
+            amount: 1,
             interpolation: 0
         },
         {
             type: 2,
-            amount: 5,
+            amount: 1,
             interpolation: 0
         },
         {
             type: 3,
-            amount: 5,
+            amount: 0,
             interpolation: 0
         },
         {
             type: 4,
-            amount: 5,
+            amount: 2,
             interpolation: 0
         }
     ],
