@@ -1,5 +1,17 @@
-function PowerUp(x, y, img) {
+function PowerUp(x, y, item) {
     PowerUp.superclass.constructor.call(this);
+    this.item = item;
+
+    switch (item) {
+        case 0:
+            img = this.bomb;
+            break;
+        case 1:
+            img = this.mushroom;
+            break;
+        default:
+            img = this.bomb;
+    }
 
     this.setBackgroundImage( img, true );
     this.setLocation(x, y);
