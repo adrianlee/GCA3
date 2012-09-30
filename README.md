@@ -1,7 +1,7 @@
-Quick links
+Play Now!
 ===========
-- Play from your Browser: http://adrianlee.github.com/GCA3/
-- Play on your Andriod: https://github.com/downloads/adrianlee/GCA3/YOLT_2012_10_01-00_31_debug_signed.apk
+- Browser: http://adrianlee.github.com/GCA3/
+- Andriod: https://github.com/downloads/adrianlee/GCA3/YOLT_2012_10_01-00_31_debug_signed.apk
 
 
 Instructions & How To
