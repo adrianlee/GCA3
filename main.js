@@ -664,7 +664,7 @@
         // __setKeys( scene, hero );
         healthBar = new HealthBar(200,450,hero.lives);
         scene.addChild(healthBar);
-        __deadScreen.prototype.text.setText("Your level: "+level+2);
+        __deadScreen.prototype.text.setText("Your level: "+(level+2));
         level = -1;
         director.setScene(2);
     }
