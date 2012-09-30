@@ -7,9 +7,10 @@ function HealthBar(x,y,lives){
   this.setBounds(x,y,500,50);
 }
 HealthBar.prototype.hearts = function(heroHearts){
+  console.log(this.childrenList.length);
   if(heroHearts>this.childrenList.length){
     for(var i=0;i<heroHearts-this.childrenList.length;i++){
-      this.addChild(new Heart(50*i,0));
+      this.addChild(new Heart(50*(i+heroHearts-1),0));
     }
   }else if(heroHearts<this.childrenList.length){
     console.log(this.childrenList);

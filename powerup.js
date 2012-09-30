@@ -32,8 +32,11 @@ function PowerUp(item) {
 }
 
 PowerUp.prototype = {
-    pickup: function() {
-        console.log("You've got an item!");
+    pickup: function(hero) {
+                console.log(hero.lives);
+        hero.lives++;
+        return this;
+
     },
 
 

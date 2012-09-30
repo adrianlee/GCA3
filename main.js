@@ -208,6 +208,7 @@
             };
 
         scene.onRenderEnd =  function(time)    {
+            console.log(hero.lives);
             healthBar.hearts(hero.lives);
             world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
@@ -281,7 +282,7 @@
     function addPowerUp(director, scene, item) {
         var obj;
 
-        for (var i = 0; i < 2; i++) {
+        for (var i = 1; i < Math.random()+0.1; i++) {
             obj = new PowerUp(i);
 
             powerup.push(obj);
@@ -481,7 +482,7 @@
 
         // add container to scene
         scene.addChild(enemyContainer,1);
-        //scene.addChild(powerUpContainer);
+        scene.addChild(powerUpContainer);
 
 
         // collision detectiob, enemy
@@ -515,10 +516,14 @@
                 //     console.log(powerUpContainer[i]);
                 // }
                 if ( collide.length ) {
+                    collide[0].pickup(hero);
+                    powerUpContainer.removeChild(collide[0]);
+                    powerup.removeByValue(collide[0]);
+                    collide[0].destroy();
+                    console.log(hero.lives);
                     // collision with power ups.
                     director.audioPlay("audio_2");
-                    console.log("powerup!");
-                    console.log(collide[0].pickup());
+                    
                 }
             },
         null);
@@ -565,7 +570,7 @@
 
     function __gameOver(director,scene){
 
-        level = -1;
+
         currentLevel.cancel();
         enemyContainer.destroy();
         powerUpContainer.destroy();
@@ -584,6 +589,7 @@
         healthBar = new HealthBar(200,450,hero.lives);  
         scene.addChild(healthBar);        
         __deadScreen.prototype.text.setText("Your score: "+scene.time);
+        level = -1;
         director.setScene(2);
     }
 })();
