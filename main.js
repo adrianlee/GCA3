@@ -17,7 +17,7 @@
     var world;
     var wallThickness = 5;
     var text;
-    var level=13;
+    var level=-1;
     var currentLevel;
     var levelDuration = window.levelDuration = 10000;
 
