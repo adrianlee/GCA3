@@ -647,8 +647,6 @@
     }
 
     function __gameOver(director,scene){
-
-
         currentLevel.cancel();
         enemyContainer.destroy();
         powerUpContainer.destroy();
@@ -663,16 +661,10 @@
         scene.removeChild(hero);
         hero =new Player(scene.width/2,scene.height/2).createBody(world);
         scene.addChild(hero);
-       // __setKeys( scene, hero );
-<<<<<<< HEAD
-        healthBar = new HealthBar(200,450,hero.lives);  
-        scene.addChild(healthBar);        
-        __deadScreen.prototype.text.setText("Your level: "+level);
-=======
+        // __setKeys( scene, hero );
         healthBar = new HealthBar(200,450,hero.lives);
         scene.addChild(healthBar);
-        __deadScreen.prototype.text.setText("Your score: "+scene.time);
->>>>>>> a7d259b16bad1281979f0e86d1cfe08e8d594e8e
+        __deadScreen.prototype.text.setText("Your level: "+level);
         level = -1;
         director.setScene(2);
     }
