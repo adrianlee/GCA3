@@ -18,7 +18,7 @@ York University
 
 Instructions & How To
 =====================
-When "You Only Live Thrice" opens, tough the start button to begin the game.
+When "You Only Live Thrice" opens, touch the start button to begin the game.
 
 The main objective is to guide your character using your touchpad through the various enemies that appear in a randomized pattern.
 
