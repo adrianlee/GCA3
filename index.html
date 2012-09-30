@@ -1,13 +1,13 @@
 <script type="text/javascript" src="lib/caat.js"></script>
 <script type="text/javascript" src="mixin.js"></script>
-<script type="text/javascript" src="player.js"></script>
+
 
 <script type="text/javascript" src="lib/box2d.js"></script>
 <script type="text/javascript" src="lib/caat-box2d.js"></script>
 <script type="text/javascript" src="enemies.js"></script>
 <script type="text/javascript" src="powerup.js"></script>
 <script type="text/javascript" src="level.js"></script>
-
+<script type="text/javascript" src="player.js"></script>
 <div class="sample" id="div_canvas"></div>
 
 <style type="text/css">
@@ -105,7 +105,8 @@
                     { id:'bullet', url:'Image/Projectiles/Random_Projectile2_Rotated.png'},
                     { id:'joypad', url:'Image/Interface/Outer_Square.png'},
                     { id:'joystick',url:'Image/Interface/Inner_Square50px.png'},
-                    { id:'hero', url:'Image/Units/Human.png'}
+                    { id:'hero', url:'Image/Units/Human.png'},
+                    { id:'back1', url:'Image/Background/Tiled_Background.png'}
                 ],
                 function( count, images ) {
                     if (count === images.length) {
@@ -121,7 +122,7 @@
                     setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
 
             CAAT.currentDirector = director;
-
+            CAAT.PMR = director.width / 10;
             // Preload audio and images!
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
@@ -130,20 +131,26 @@
                 addAudio("music_1", document.getElementById('music_1'));
 
             director.setImagesCache(images);
+
             PowerUp.prototype.bomb = director.getImage('bomb');
             PowerUp.prototype.mushroom = director.getImage('mushroom');
             Bullet.prototype.image = director.getImage('bullet');
+            Player.prototype.image = director.getImage('hero');
             joystick.setBackgroundImage(director.getImage('joypad'));
             subjs.setBackgroundImage(director.getImage('joystick'));
             // Create Scene
             var scene = director.createScene();
-            scene.setFillStyle( '#000' );
-
+            scene.setBounds(0,0,800,500);
+            scene.setFillStyle('#000');
+           // scene.setBackgroundImage(director.getImage('back1'));
+            scene.cacheAsBitmap();
             world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
             world.SetContinuousPhysics(true);
 
             __createLevel( director, scene );
-            __createHero( scene ,director.getImage('hero'));
+            //__createHero( scene ,director.getImage('hero'));
+            hero =new Player(scene.width/2,scene.height/2).createBody(world);
+            scene.addChild(hero);
             __startLevel(director, scene, 1);
             joystickE ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
@@ -159,16 +166,10 @@
                 var b  = contact.GetFixtureB().GetBody();
                 a.SetAngularVelocity(0);
                 b.SetAngularVelocity(0);
-              /*  var angle = Math.atan(a.GetLinearVelocity().y/a.GetLinearVelocity().x);
-                a.SetAngle(angle);
-                angle = Math.atan(b.GetLinearVelocity().y/b.GetLinearVelocity().x);
-                b.SetAngle(angle);*/
-               // console.log(contact.GetFixtureA().GetBody());
 
             }
             world.SetContactListener(listener);
 
-            window.scene = scene;
 
             /* Game Loop */
             scene.onRenderStart= function() {
@@ -178,9 +179,10 @@
 
             scene.onRenderEnd =  function(time)    {
                 world.DrawDebugData();
+
                 if(enemyContainer.childrenList.length==0 && !levelpause){
                     console.log("Level: " +level);
-                    __nextLevel(level);
+                    __nextLevel(this,level);
                     level++;
                     levelpause = true;
                 }else{
@@ -191,7 +193,6 @@
                 }
             }
 
-            window.c = enemyContainer;
 
             CAAT.loop(60);
         }
@@ -243,28 +244,6 @@
         }
 
 
-        function __createHero( scene,image ) {
-            var size= 25;
-
-            hero = new CAAT.B2DPolygonBody().createBody(world,{
-                bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
-                x: scene.width/2,
-                y: scene.height/2,
-                density:    1.2,
-                friction:   1,
-                restitution: 0.5,
-                image: image,
-                polygonType:CAAT.B2DPolygonBody.Type.BOX,
-                bodyDef:    [
-                    {x: 0,  y: 0 },
-                    {x: 50,  y: 50 }
-                ],
-                userData:   {}
-            });
-            hero.setFillStyle('#fff');
-            hero.cacheAsBitmap();
-            scene.addChild( hero );
-        }
 
         function addPowerUp(director, scene, item) {
             var obj;
@@ -299,7 +278,7 @@
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
 
-                t.setVelocity(hero.x,hero.y,10);
+                t.setVelocity(hero.x-x,hero.y-y,2);
                 window.t=t;
                 t.addListener({
                     actorLifeCycleEvent : function(actor, event, time) {
@@ -311,7 +290,7 @@
                         }
                     }
                 });
-                t.setFrameTime( scene.time, 1000 );
+                t.setFrameTime( scene.time, 2000 );
             }
         }
 
@@ -338,7 +317,7 @@
             console.log("spawn");
         }
 
-        function __nextLevel(level){
+        function __nextLevel(scene,level){
             scene.createTimer(scene.time+3000,1,function(time,ttime,timerTask){
                 // empty array
                 enemy.length = 0;
@@ -389,7 +368,11 @@
                     if ( collide.length ) {
                         // collision with enemies.
                         director.audioPlay("audio_1");
-                        hero.setLocation( scene.width/2-hero.width/2, scene.height/2-hero.height/2 );
+                        if (!hero.die()){
+                            console.log('Game Over!');
+                        }else{
+                            console.log('You have '+hero.lives+' lives remaining');
+                        }
                         // enemyContainer.destroy();
                     }
                 },
