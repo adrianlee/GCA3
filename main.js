@@ -149,7 +149,9 @@
                 { id:'heart', url:'Image/Interface/Heart.png'},
                 { id:'start', url:'Image/Interface/Start.png'},
                 { id:'menu', url:'Image/Background/Splash_Black.png'},
-                { id:'game_over', url:'Image/Background/Game Over.png'}
+                { id:'game_over', url:'Image/Background/Game Over.png'},
+                { id:'ghost2', url:'Image/Units/ghost3.png'},
+                { id:'boomer', url:'Image/Units/boomer.png'}
             ],
             function( count, images ) {
                 if (count === images.length) {
@@ -175,10 +177,14 @@
         CAAT.PMR = director.width / 10;
 
         director.
-            addAudio("death", document.getElementById('death')).
-            addAudio("audio_2", document.getElementById('audio_2')).
-            addAudio("audio_3", document.getElementById('audio_3')).
-            addAudio("music_1", document.getElementById('music_1'));
+            addAudio("death", 'sound/Retro Gaming - Lose Life - GCA3.mp3').
+            addAudio("audio_2", 'sound/2.mp3').
+            addAudio("audio_3", 'sound/3.mp3').
+            addAudio("gameover", 'sound/Retro Gaming - Game Over - GCA3.mp3').
+            addAudio("level1", 'sound/Retro Gaming - Level 1 - GCA3.mp3').
+            addAudio("menuscreen", 'sound/Retro Gaming - Menu Screen (2)- GCA3.mp3').
+            addAudio("nextlevel", 'sound/Retro Gaming - Next Level (2)- GCA3.mp3').
+            addAudio("powerup", 'sound/Retro Gaming - Powerup - GCA3.mp3');
 
         director.setImagesCache(images);
 
@@ -189,6 +195,8 @@
         Knight.prototype.image = director.getImage('knight');
         Ghost.prototype.image = director.getImage('ghost');
         Heart.prototype.image = director.getImage('heart');
+        Boomer.prototype.image = director.getImage('boomer');
+        DumbGhost.prototype.image = director.getImage('ghost2');
         // joystick.setBackgroundImage(director.getImage('joypad'));
         // subjs.setBackgroundImage(director.getImage('joystick'));
 
@@ -284,14 +292,13 @@
             };
 
         scene.onRenderEnd =  function(time)    {
-            console.log(hero.lives);
             healthBar.hearts(hero.lives);
             world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
                 text.setText("Level "+(level+2));
                 text.setAlpha(1.0);
-                console.log("Level: " +level);
-                __nextLevel(this,level);
+                console.log("Level: " + (level+2));
+                __nextLevel(director, this,level);
                 level++;
                 levelpause = true;
             }else{
@@ -522,7 +529,7 @@
         return timeline;
     }
 
-    function __nextLevel(scene, level){
+    function __nextLevel(director, scene, level){
         scene.createTimer(scene.time+5000,1,function(time,ttime,timerTask){
             text.setAlpha(0.0);
             // empty array
@@ -530,6 +537,9 @@
             powerup.length = 0;
 
             var timeline = __generateLevel();
+
+            //play music
+            director.audioPlay("level1");
 
             // spawn enemies
             // addEnemies(scene, level);
@@ -574,9 +584,8 @@
 
                 if ( collide.length >0 ) {
                     console.log("collision");
-                    console.log(collide);
                     // collision with enemies.
-                    director.audioPlay("death");
+                    
                     __cleanUp(director,scene);
 
                 }
@@ -598,7 +607,7 @@
                     powerUpContainer.removeChild(collide[0]);
                     powerup.removeByValue(collide[0]);
                     collide[0].destroy();
-                    console.log(hero.lives);
+                    // console.log(hero.lives);
                     // collision with power ups.
                     director.audioPlay("audio_2");
 
@@ -623,6 +632,9 @@
 
     function __cleanUp(director,scene){
         if(hero.die()){
+            // kill music
+            director.endSound();
+            director.audioPlay("death");    
             console.log("You have "+hero.lives+" remaining");
             console.log(enemyContainer.childrenList.length);
             enemyContainer.destroy();
@@ -630,7 +642,6 @@
             enemy = [];
             enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
             powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
-
             // Randomly generate enemies based on level, addChild to container
             addPowerUp(director, scene);
             // add container to scene
@@ -642,6 +653,8 @@
            //__nextLevel(scene,level);
 
         }else{
+            director.endSound();
+            director.audioPlay("gameover");
             __gameOver(director,scene);
         }
     }
