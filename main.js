@@ -239,7 +239,7 @@
             director.setScene(0);
         }).setBounds(scene.width/2-100,scene.height/2-24,200,48);
 
-
+        director.audioPlay("menuscreen");
         scene.addChild(button);
     }
     function __start(director,scene) {
@@ -247,6 +247,7 @@
         text = new CAAT.TextActor().calcTextSize(director).setFont('100px BM harry').setAlpha(1.0);
         text.setLocation(scene.width/2-150,scene.height/2-100);
         scene.addChild(text);
+        scene.setFillStyle('#000');
        // scene.setBackgroundImage(director.getImage('back1'));
         scene.cacheAsBitmap();
         world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
@@ -526,7 +527,7 @@
     }
 
     function __nextLevel(director, scene, level){
-        scene.createTimer(scene.time+5000,1,function(time,ttime,timerTask){
+        scene.createTimer(scene.time+6000,1,function(time,ttime,timerTask){
             text.setAlpha(0.0);
             // empty array
             enemy.length = 0;
@@ -676,7 +677,7 @@
         __deadScreen.prototype.text.setText("Your level: "+(level+2));
         level = -1;
         director.setScene(2);
-        director.audioPlay("menuscreen");
+
     }
 
     window.addEventListener('load', __preload, false);
