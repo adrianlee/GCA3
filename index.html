@@ -9,7 +9,6 @@
 <script type="text/javascript" src="level.js"></script>
 <script type="text/javascript" src="player.js"></script>
 <script type="text/javascript" src="ui.js"></script>
-<div class="sample" id="div_canvas"></div>
 
 <style type="text/css">
     body {
@@ -17,18 +16,11 @@
     }
 </style>
 
-<div id="experiment-holder">
-    <canvas id="experiment-canvas"></canvas>
-</div>
-
 <!-- Preload audio assets into DOM -->
 <audio src='sound/Retro Gaming - Lose Life - GCA3.mp3' preload='auto' id='death'></audio>
 <audio src='sound/2.mp3' preload='auto' id='audio_2'></audio>
 <audio src='sound/3.mp3' preload='auto' id='audio_3'></audio>
 <audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
-
-<img src='Image/Units/BadGuy.png' preload='auto' id='sprite_1'></img>
-<img src='Image/Projectiles/Random_Projectile2.png' preload='auto' id='sprite_1'></img>
 
 <script>
     (function() {
@@ -171,7 +163,7 @@
             var button = new CAAT.Actor();
             button.setAsButton(director.getImage('start'),0,0,0,0,function(){
                 director.setScene(0);
-            }).setBounds(scene.width/2-100,scene.height/2-24,200,48);   
+            }).setBounds(scene.width/2-100,scene.height/2-24,200,48);
 
 
             scene.addChild(button);
@@ -365,6 +357,15 @@
                                     break;
                                 case 1:
                                     t = new Knight(x, y).createBody(world);
+                                    break;
+                                case 2:
+                                    t = new Ghost(x, y).createBody(world);
+                                    break;
+                                case 3:
+                                    t = new DumbGhost(x, y).createBody(world);
+                                    break;
+                                case 4:
+                                    t = new Boomer(x, y).createBody(world);
                                     break;
                                 default:
                                     t = new Bullet(x, y).createBody(world);
@@ -567,7 +568,7 @@
             }
         }
         function __gameOver(director){
-            
+
             currentLevel.cancel();
             enemyContainer.destroy();
             powerUpContainer.destroy();
@@ -577,7 +578,7 @@
             scene.addChild(enemyContainer);
             scene.addChild(powerUpContainer);
             scene.removeChild(joystick);
-            scene.addChild(joystick);            
+            scene.addChild(joystick);
             director.setScene(1);
         }
     })();
