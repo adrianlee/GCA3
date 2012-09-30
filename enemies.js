@@ -46,9 +46,9 @@ Bullet.prototype = {
 };
 extend(Bullet,CAAT.B2DPolygonBody);
 
-// Fish
-function Fish(x, y) {
-    Fish.superclass.constructor.call(this);
+// Knight
+function Knight(x, y) {
+    Knight.superclass.constructor.call(this);
 
     var params= {
         bodyType:   Box2D.Dynamics.b2Body.b2_dynamicBody,
@@ -61,7 +61,7 @@ function Fish(x, y) {
         image: new CAAT.SpriteImage().initialize(document.getElementById('sprite_1'), 1, 1),
         bodyDef:    [
             {x: 0,  y: 0 },
-            {x: 20,  y: 30 }
+            {x: 50,  y: 50 }
         ],
         userData: {}
     };
@@ -81,11 +81,12 @@ function Fish(x, y) {
     return this;
 };
 
-Fish.prototype = {
+Knight.prototype = {
     createBody: function(world,params){
         var p = params ||this.params;
-        return Fish.superclass.createBody.call(this,world,p);
-
+        var k = Knight.superclass.createBody.call(this,world,p);
+        k.worldBody.SetFixedRotation(true);
+        return k;
     },
 
     move: function(){
@@ -100,12 +101,12 @@ Fish.prototype = {
                 speed*Math.cos(tx*Math.PI+theta),
                 speed*Math.sin(tx*Math.PI+theta) ));
         console.log(theta);
-         this.worldBody.SetAngle(theta+(tx-0.5)*Math.PI);
+         //this.worldBody.SetAngle(theta+(tx-0.5)*Math.PI);
         return this;
     }
 
 };
-extend(Fish, CAAT.B2DPolygonBody);
+extend(Knight, CAAT.B2DPolygonBody);
 
 
 
