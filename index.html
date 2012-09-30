@@ -1,10 +1,11 @@
 <script type="text/javascript" src="lib/caat.js"></script>
-<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="mixin.js"></script>
 <script type="text/javascript" src="player.js"></script>
 
 <script type="text/javascript" src="lib/box2d.js"></script>
 <script type="text/javascript" src="lib/caat-box2d.js"></script>
 <script type="text/javascript" src="enemies.js"></script>
+<script type="text/javascript" src="powerup.js"></script>
 
 <div class="sample" id="div_canvas"></div>
 
@@ -31,13 +32,18 @@
     (function() {
         CAAT.DEBUG = 1;
 
-        window.addEventListener('load', __start, false);
+        window.addEventListener('load', __preload, false);
+
+        window.enemy = [];
+        window.powerup = [];
+
         var enemyContainer;
+        var powerUpContainer;
+
         var keys = [0,0,0,0];
         var prevTime = -1;
         var pixelsPerSecond = 400;
         var collision = null;
-        var entitiesCollision = null;
         var hero = null;
         var world;
         var wallThickness = 5;
@@ -47,6 +53,7 @@
 
         var joystickSize = 150;
         var levelpause = false;
+
         if (joystick) {
             var joystick = new CAAT.ActorContainer().
                 setBounds(30,30,joystickSize,joystickSize).
@@ -86,8 +93,19 @@
             }
         }
 
+        function __preload() {
+            new CAAT.ImagePreloader().loadImages(
+                [
+                    { id:'bomb', url:'Image/powerups/bomb.png'}
+                ],
+                function( count, images ) {
 
-        function __start() {
+                    __start(images);
+                }
+            );
+        }
+
+        function __start(images) {
 
             var director = new CAAT.Director().
                     initialize( 800,500, document.getElementById('experiment-canvas') ).
@@ -95,20 +113,21 @@
 
             CAAT.currentDirector = director;
 
+            // Preload audio and images!
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
                 addAudio("audio_2", document.getElementById('audio_2')).
                 addAudio("audio_3", document.getElementById('audio_3')).
                 addAudio("music_1", document.getElementById('music_1'));
 
-            var scene = director.createScene();
-            world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
-            world.SetContinuousPhysics(true);
+            director.setImagesCache(images);
 
+            // Create Scene
+            var scene = director.createScene();
             scene.setFillStyle( '#000' );
 
-
-            var badguy = new CAAT.SpriteImage().initialize(document.getElementById('sprite_1'), 1, 1);
+            world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
+            world.SetContinuousPhysics(true);
 
             __createLevel( director, scene );
             __createHero( scene );
@@ -138,7 +157,9 @@
                     }
                 }
             }
+
             window.c = enemyContainer;
+
             CAAT.loop(60);
         }
 
@@ -193,29 +214,42 @@
             var size= 25;
 
             hero = new CAAT.B2DPolygonBody().createBody(world,{
-                    bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
-                    x: scene.width/2,
-                    y: scene.height/2,
-                    density:    1.2,
-                    friction:   1,
-                    restitution: 0.5,
-                    polygonType:CAAT.B2DPolygonBody.Type.BOX,
-                    bodyDef:    [
-                        {x: 0,  y: 0 },
-                        {x: 10,  y: 10 }
-                    ],
-                    userData:   {}
-
+                bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
+                x: scene.width/2,
+                y: scene.height/2,
+                density:    1.2,
+                friction:   1,
+                restitution: 0.5,
+                polygonType:CAAT.B2DPolygonBody.Type.BOX,
+                bodyDef:    [
+                    {x: 0,  y: 0 },
+                    {x: 10,  y: 10 }
+                ],
+                userData:   {}
             });
             hero.setFillStyle('#fff');
             hero.cacheAsBitmap();
             scene.addChild( hero );
         }
 
+        function addPowerUp(director, scene, item) {
+            var obj;
+
+            for (var i = 0; i < 2; i++) {
+                obj = new PowerUp(50+Math.random()*700, 50+Math.random()*400, director.getImage('bomb'));
+
+                powerup.push(obj);
+                powerUpContainer.addChild(obj);
+            }
+
+
+        }
+
         function addEnemies(container,scene,level){
             for(var i=0;i<1*level;i++){
                 // var t = new Bullet(0,Math.random()*500).createBody(world);
                 var t = new Fish(0, Math.random()*500).createBody(world);
+                enemy.push(t);
 
                 window.t = t;
                 enemyContainer.addChild(t);
@@ -233,21 +267,24 @@
                     }
                 });
                 t.setFrameTime( scene.time, 7500 );
-
-
             }
         }
 
         function __nextLevel(level){
             scene.createTimer(scene.time+300,1,null,function(time,ttime,timerTask){
+                // empty array
+                enemy.length = 0;
+                powerup.length = 0;
+
+                // spawn enemies
                 addEnemies(enemyContainer,scene,level);
                 this.cancel();
             },null)
+
         }
 
         function __startLevel(director, scene, level) {
 
-            var enemy = [];
             var temp;
 
             var getRand = function () {
@@ -259,19 +296,25 @@
 
             // Create container for holding enemies
             enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+            powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
 
             // Randomly generate enemies based on level, addChild to container
             addEnemies(enemyContainer,scene,level);
+            addPowerUp(director, scene);
+
             // add container to scene
             scene.addChild(enemyContainer,1);
+            scene.addChild(powerUpContainer);
 
-            // collision detection
+
+            // collision detectiob, enemy
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
-                    entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
+                    var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
                     var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
+                    // console.log(collide);
                     for(var i = 0;i<enemyContainer.length;i++){
-                        enemyContainer[i].setVelocity(0,0);
+                        // enemyContainer[i].setVelocity(0,0);
                     }
                     if ( collide.length ) {
                         // collision with enemies.
@@ -280,7 +323,26 @@
                         // enemyContainer.destroy();
                     }
                 },
-                null);
+            null);
+
+            // collision detection, power ups
+            scene.createTimer( scene.time, Number.MAX_VALUE, null,
+                function(time, ttime, timerTask) {
+                    var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, powerup );
+                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
+                    collide.length ? console.log(collide) : null;
+                    // for(var i = 0;i<powerUpContainer.length;i++){
+                    //     powerUpContainer[i].setVelocity(0,0);
+                    //     console.log(powerUpContainer[i]);
+                    // }
+                    if ( collide.length ) {
+                        // collision with power ups.
+                        director.audioPlay("audio_2");
+                        console.log("powerup!");
+                        console.log(collide[0].pickup());
+                    }
+                },
+            null);
         }
 
 

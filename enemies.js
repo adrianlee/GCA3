@@ -1,6 +1,6 @@
 function Bullet(x,y){
     Bullet.superclass.constructor.call(this);
-        var params= {
+    var params= {
         bodyType:   Box2D.Dynamics.b2Body.b2_dynamicBody,
         x: x||100,
         y: y||100,
@@ -41,7 +41,7 @@ Bullet.prototype = {
     },
 
     move: function(){
-        console.log(this);
+        // console.log(this);
     }
 };
 extend(Bullet,CAAT.B2DPolygonBody);
@@ -97,7 +97,7 @@ Fish.prototype = {
     },
 
     move: function(){
-        console.log(this);
+        // console.log(this);
     }
 };
 extend(Fish, CAAT.B2DPolygonBody);
