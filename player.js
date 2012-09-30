@@ -16,7 +16,7 @@ function Player(x,y){
     ],
     userData:   {}
   };
-  this.lives = 3;
+  this.lives = 1;
   return this;
 }
 

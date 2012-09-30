@@ -137,7 +137,7 @@ Knight.prototype = {
     move: function(x,y){
         var vel = this.worldBody.GetLinearVelocity();
 
-        this.setVelocity(vel.x+(x-this.x)/this.homeFactor,vel.y+(y-this.y)/this.homeFactor,5);
+        this.setVelocity(vel.x+(x-this.x)/this.homeFactor,vel.y+(y-this.y)/this.homeFactor,3);
     },
 
     setVelocity: function(x,y,speed){
