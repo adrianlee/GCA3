@@ -82,7 +82,7 @@ Boomer.prototype = {
             var b = new Bullet(this.x,this.y).createBody(this.world);
             this.parent.addChild(b);
             b.setVelocity(array[i],array[(i+6)%8],2);
-            b.setFrameTime(this.time,1000);
+            b.setFrameTime(this.time,2000);
         }
         Boomer.superclass.destroy.call(this);
     }
