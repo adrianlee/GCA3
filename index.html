@@ -102,6 +102,11 @@
         }
 
         function __preload() {
+            var el = document.createElement('link');
+            el.href = "Image/font/BMHARRY.ttf";
+            el.type = 'text/css';
+            el.rel ='stylesheet';
+            document.head.appendChild(el);
             var director = new CAAT.Director().
                 initialize( 800,500, document.getElementById('experiment-canvas') ).
                 setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
@@ -173,7 +178,7 @@
         }
         function __start(director,scene) {
 
-            text = new CAAT.TextActor().calcTextSize(director).setFont('100px Ludica Sans').setAlpha(1.0);
+            text = new CAAT.TextActor().calcTextSize(director).setFont('100px BM harry').setAlpha(1.0);
             text.setLocation(scene.width/2-150,scene.height/2-100);
             scene.addChild(text);
             window.t= text;
