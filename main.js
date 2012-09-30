@@ -294,7 +294,6 @@
             joystick.joy_y = joystick.joy_y *.9;
             healthBar.hearts(hero.lives);
             if(enemyContainer.childrenList.length==0 && !levelpause){
-                director.endSound();
                 text.setText("Level " + (level+2));
                 text.setAlpha(1.0);
 
@@ -531,6 +530,7 @@
 
     function __nextLevel(director, scene, level){
         scene.createTimer(scene.time+6000,1,function(time,ttime,timerTask){
+            
             text.setAlpha(0.0);
             // empty array
             enemy.length = 0;
