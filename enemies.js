@@ -163,8 +163,6 @@ function Ghost(x,y){
     this.setAlpha(0.20);
     this.cacheAsBitmap();
     this.homeFactor = 500;
-
-    this.homeFactor = 50;
 }
 
 extend(Ghost,Knight);

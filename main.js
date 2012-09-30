@@ -260,7 +260,7 @@
         __startLevel(director, scene, 1);
         joystickE ? scene.addChildAt(joystick,1000) : null;
 
-        // __setKeys( scene, hero );
+        __setKeys( scene, hero );
 
 
         var listener = new Box2D.Dynamics.b2ContactListener;
@@ -286,7 +286,6 @@
         scene.onRenderEnd =  function(time)    {
             joystick.joy_x = joystick.joy_x *.9;
             joystick.joy_y = joystick.joy_y *.9;
-            console.log(hero.lives);
             healthBar.hearts(hero.lives);
             world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
@@ -321,8 +320,8 @@
                 if ( -1!=prevTime ) {
                     ttime-= prevTime;
 
-                            var nx= hero.x + joystick.joy_x*(ttime/2100)*6;
-                            var ny= hero.y + joystick.joy_y*(ttime/2100)*6;
+                            var nx= hero.x + joystick.joy_x*(ttime/1500)*6;
+                            var ny= hero.y + joystick.joy_y*(ttime/1500)*6;
 
                         /**
                          * Test map collision: hero vs map.
