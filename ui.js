@@ -1,5 +1,6 @@
 function HealthBar(x,y,lives){
   HealthBar.superclass.constructor.call(this);
+  console.log('test');
   for(var i=0;i<lives;i++){
     this.addChild(new Heart(50*i,0));
   }

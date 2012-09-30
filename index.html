@@ -563,21 +563,24 @@
                //__nextLevel(scene,level);
 
             }else{
-                __gameOver(director);
+                __gameOver(director,scene);
             }
         }
-        function __gameOver(director){
+        function __gameOver(director,scene){
             
             currentLevel.cancel();
             enemyContainer.destroy();
             powerUpContainer.destroy();
             enemy = [];
-            enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
-            powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+            enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, director.width, director.height);
+            powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, director.width, director.height);
             scene.addChild(enemyContainer);
             scene.addChild(powerUpContainer);
             scene.removeChild(joystick);
-            scene.addChild(joystick);            
+            scene.addChild(joystick);
+            scene.removeChild(healthBar);  
+            healthBar = new HealthBar(200,450,hero.lives);  
+            scene.addChild(healthBar);        
             director.setScene(1);
         }
     })();
