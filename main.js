@@ -67,8 +67,8 @@
 
                     // child.setLocation( e.point.x - child.width/2, e.point.y - child.height/2);
 
-                    this.joy_x = e.changedTouches[i].pageX - this.width/2;
-                    this.joy_y = e.changedTouches[i].pageY - this.height/2;
+                    // this.joy_x = e.changedTouches[i].pageX - this.width/2;
+                    // this.joy_y = e.changedTouches[i].pageY - this.height/2;
                 }
             };
 
@@ -91,9 +91,9 @@
                 // var actor = cc.findActorById(e.changedTouches[i].identifier);
                 // actor.setLocation(e.changedTouches[i].pageX-W/2, e.changedTouches[i].pageY-H/2);
                 // child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
-
-                this.joy_x = e.changedTouches[i].pageX - this.width/2;
-                this.joy_y = e.changedTouches[i].pageY - this.height/2;
+                hero
+                // this.joy_x = e.changedTouches[i].pageX - this.width/2;
+                // this.joy_y = e.changedTouches[i].pageY - this.height/2;
             }
         };
 
@@ -103,8 +103,11 @@
             //     var actor = cc.findActorById(e.changedTouches[i].identifier);
             //     actor.destroy();
             // }
-            this.joy_x = 0;
-            this.joy_y = 0;
+
+
+
+            // this.joy_x = 0;
+            // this.joy_y = 0;
             // var child = this.childrenList[0];
             // child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
         };
@@ -297,8 +300,10 @@
             if(enemyContainer.childrenList.length==0 && !levelpause){
                 text.setText("Level "+(level+2));
                 text.setAlpha(1.0);
+
                 console.log("Level: " + (level+2));
                 __nextLevel(director, this,level);
+
                 level++;
                 levelpause = true;
             }else{
@@ -326,8 +331,8 @@
                 if ( -1!=prevTime ) {
                     ttime-= prevTime;
 
-                            var nx= hero.x + joystick.joy_x*(ttime/1100)*10;
-                            var ny= hero.y + joystick.joy_y*(ttime/1100)*10;
+                            var nx= hero.x + joystick.joy_x*(ttime/2100)*6;
+                            var ny= hero.y + joystick.joy_y*(ttime/2100)*6;
 
 
                         /**
@@ -607,7 +612,7 @@
                     powerUpContainer.removeChild(collide[0]);
                     powerup.removeByValue(collide[0]);
                     collide[0].destroy();
-                    // console.log(hero.lives);
+
                     // collision with power ups.
                     director.audioPlay("audio_2");
 
