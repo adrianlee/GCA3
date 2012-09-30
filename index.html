@@ -169,7 +169,7 @@
             hero.setFillStyle('#fff');
             scene.addChild(hero);
             __startLevel(director, scene, 1);
-            joystickE ? scene.addChild(joystick) : null;
+            joystickE ? scene.addChildAt(joystick,1000) : null;
             __setKeys( scene, hero );
 
 
@@ -528,6 +528,8 @@
                 // add container to scene
                 scene.addChild(enemyContainer);
                 scene.addChild(powerUpContainer);
+                scene.removeChild(joystick);
+                scene.addChild(joystick);
                 currentLevel.cancel();
                //__nextLevel(scene,level);
 
