@@ -108,7 +108,7 @@ function Knight(x, y) {
         userData: {}
     };
 
-    this.homeFactor = 100;
+    this.homeFactor = 3;
 
     // this.createBody = createBody;
   //  this.setVelocity = setVelocity;
