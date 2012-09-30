@@ -142,6 +142,7 @@
                 { id:'start', url:'Image/Interface/Start.png'},
                 { id:'menu', url:'Image/Background/Splash_Black.png'},
                 { id:'game_over', url:'Image/Background/Game Over.png'},
+                { id:'background', url:'Image/Background/Grass_Flowers.png'},
                 { id:'ghost2', url:'Image/Units/ghost3.png'},
                 { id:'boomer', url:'Image/Units/boomer.png'}
             ],
@@ -248,6 +249,8 @@
         text.setLocation(scene.width/2-150,scene.height/2-100);
         scene.addChild(text);
         scene.setFillStyle('#000');
+        var actor = new CAAT.Actor().setBackgroundImage(director.getImage('background'));
+        scene.addChild(actor);
        // scene.setBackgroundImage(director.getImage('back1'));
         scene.cacheAsBitmap();
         world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
@@ -290,8 +293,8 @@
             joystick.joy_x = joystick.joy_x *.9;
             joystick.joy_y = joystick.joy_y *.9;
             healthBar.hearts(hero.lives);
-            world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
+                director.endSound();
                 text.setText("Level " + (level+2));
                 text.setAlpha(1.0);
 
