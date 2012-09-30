@@ -50,6 +50,7 @@
         var wallThickness = 5;
 
         var level=1;
+        var currentLevel;
         var joystickE = true;
 
         var joystickSize = 150;
@@ -153,7 +154,6 @@
         }
         function __menu(scene){
 
-            __start(scene);
         }
         function __start(director,scene) {
 
@@ -178,7 +178,6 @@
 
             }
             listener.EndContact = function(contact){
-                console.log("end");
                 var a = contact.GetFixtureA().GetBody();
                 var b  = contact.GetFixtureB().GetBody();
                 a.SetAngularVelocity(0);
@@ -196,16 +195,16 @@
 
             scene.onRenderEnd =  function(time)    {
                 world.DrawDebugData();
-
                 if(enemyContainer.childrenList.length==0 && !levelpause){
                     console.log("Level: " +level);
                     __nextLevel(this,level);
                     level++;
                     levelpause = true;
                 }else{
+
                     for(var i=0;i<enemyContainer.childrenList.length;i++){
                         enemyContainer.childrenList[i].move(hero.x,hero.y);
-                    levelpause = false;
+                    
                     }
                 }
             }
@@ -308,12 +307,13 @@
             enemySpawned = timeline.shift();
 
             var levelDuration = 10000;
-
-            scene.createTimer(
+            var clevel = level;
+            currentLevel = scene.createTimer(
                 scene.time,
                 levelDuration,
                 function(time, ttime, timerTask) {
-                    console.log("level ended!")
+                    console.log("level ended!");
+                    levelpause = false;
                 },
                 function(time, ttime, timerTask) {
                     if (enemySpawned && !!enemySpawned.time) {
@@ -348,13 +348,14 @@
                             t.setVelocity(hero.x-x,hero.y-y,2);
                             t.setFrameTime( scene.time, t.lifespan );
 
-                            console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime);
+                            console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime+ " "+clevel);
                             enemySpawned = timeline.shift();
                         }
                     }
                 },
-                null
+                function(){console.log("canceled "+level);levelpause = false;level--;}
             );
+          
 
             // while (timeline) {
             //     enemySpawned = timeline.pop();
@@ -450,7 +451,6 @@
             powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
 
             // Randomly generate enemies based on level, addChild to container
-            addEnemies(enemyContainer,scene,level);
             addPowerUp(director, scene);
 
             // add container to scene
@@ -459,22 +459,20 @@
 
 
             // collision detectiob, enemy
+       
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
+                     
                     var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
                     var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero+1, hero.width+1, hero.height+1) );
                     // console.log(collide);
 
                     if ( collide.length >0 ) {
-
+                        console.log("collision");
+                        console.log(collide);
                         // collision with enemies.
                         director.audioPlay("audio_1");
-                        if (!hero.die()){
-                            console.log('Game Over!');
-                        }else{
-                            console.log('You have '+hero.lives+' lives remaining');
-                        }
-
+                        __cleanUp(director,scene);
 
                     }
                 },
@@ -514,16 +512,34 @@
             collision = new CAAT.QuadTree().create(0, 0, director.width, director.height, walls);
         }
 
-        function __cleanUp(){
+        function __cleanUp(director,scene){
             if(hero.die()){
-                enemyContainer.emptyChildren();
-                //start level again
+                console.log("You have "+hero.lives+" remaining");
+                console.log(enemyContainer.childrenList.length);
+                enemyContainer.destroy();
+                powerUpContainer.destroy();
+                enemy = [];
+                enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+                powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+
+                // Randomly generate enemies based on level, addChild to container
+                addPowerUp(director, scene);
+
+                // add container to scene
+                scene.addChild(enemyContainer);
+                scene.addChild(powerUpContainer);
+                currentLevel.cancel();
+               //__nextLevel(scene,level);
+
             }else{
-                __gameOver();
+                __gameOver(director);
             }
         }
-        function __gameOver(){
-
+        function __gameOver(director){
+            director.setScene(1);
+            currentLevel.cancel();
+            enemyContainer.destroy();
+            powerUpContainer.destroy();
         }
     })();
 </script>

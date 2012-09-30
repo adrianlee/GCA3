@@ -29,7 +29,7 @@ Player.prototype = {
   die: function(){
     this.setLocation( this.params.x, this.params.y );
     this.lives--;
-    if(this.lives == 0){
+    if(this.lives < 0){
       return false;
     }else{
       return true;
