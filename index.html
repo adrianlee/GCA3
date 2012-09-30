@@ -22,7 +22,7 @@
 </div>
 
 <!-- Preload audio assets into DOM -->
-<audio src='sound/1.mp3' preload='auto' id='audio_1'></audio>
+<audio src='sound/Retro Gaming - Lose Life - GCA3.mp3' preload='auto' id='death'></audio>
 <audio src='sound/2.mp3' preload='auto' id='audio_2'></audio>
 <audio src='sound/3.mp3' preload='auto' id='audio_3'></audio>
 <audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
@@ -135,7 +135,7 @@
 
                         // Preload audio and images!
             director.
-                addAudio("audio_1", document.getElementById('audio_1')).
+                addAudio("death", document.getElementById('death')).
                 addAudio("audio_2", document.getElementById('audio_2')).
                 addAudio("audio_3", document.getElementById('audio_3')).
                 addAudio("music_1", document.getElementById('music_1'));
@@ -447,7 +447,7 @@
         }
 
         function __nextLevel(scene, level){
-            scene.createTimer(scene.time+3000,1,function(time,ttime,timerTask){
+            scene.createTimer(scene.time+5000,1,function(time,ttime,timerTask){
                 text.setAlpha(0.0);
                 // empty array
                 enemy.length = 0;
@@ -484,7 +484,7 @@
 
             // add container to scene
             scene.addChild(enemyContainer,1);
-            scene.addChild(powerUpContainer);
+            //scene.addChild(powerUpContainer);
 
 
             // collision detectiob, enemy
@@ -500,7 +500,7 @@
                         console.log("collision");
                         console.log(collide);
                         // collision with enemies.
-                        director.audioPlay("audio_1");
+                        director.audioPlay("death");
                         __cleanUp(director,scene);
 
                     }
@@ -567,10 +567,17 @@
             }
         }
         function __gameOver(director){
-
+            
             currentLevel.cancel();
             enemyContainer.destroy();
             powerUpContainer.destroy();
+            enemy = [];
+            enemyContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+            powerUpContainer = new CAAT.ActorContainer().setBounds(0, 0, scene.width, scene.height);
+            scene.addChild(enemyContainer);
+            scene.addChild(powerUpContainer);
+            scene.removeChild(joystick);
+            scene.addChild(joystick);            
             director.setScene(1);
         }
     })();

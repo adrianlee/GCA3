@@ -8,7 +8,7 @@ var sample = {
             interporlation: 0
         },
         {
-            type: 1,
+            type: 0,
             amount: 5,
             interpolation: 1
         }
