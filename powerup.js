@@ -1,21 +1,25 @@
-function PowerUp(x, y, item) {
+function PowerUp(item) {
     PowerUp.superclass.constructor.call(this);
     this.item = item;
 
     switch (item) {
         case 0:
             img = this.bomb;
+            this.setScale(0.7, 0.7);
             break;
         case 1:
             img = this.mushroom;
+            this.setScale(0.6, 0.6);
             break;
         default:
             img = this.bomb;
     }
 
     this.setBackgroundImage( img, true );
-    this.setLocation(x, y);
-    this.setScale(0.7, 0.7);
+
+    // set random position, 50px padding.
+    this.setLocation(50+Math.random()*700, 50+Math.random()*400);
+
     // console.log(window.scene);
     // window.scene.createTimer(
     //     0,
