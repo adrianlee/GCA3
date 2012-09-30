@@ -53,7 +53,7 @@ var level4 = {
             type: 0,
             amount: 2,
             interporlation: 0
-        }
+        },
         {
             type: 2,
             amount: 2,
