@@ -135,6 +135,26 @@
             joystick ? scene.addChild(joystick) : null;
             __setKeys( scene, hero );
 
+
+            var listener = new Box2D.Dynamics.b2ContactListener;
+            listener.BeginContact = function(contact){
+
+            }
+            listener.EndContact = function(contact){
+                console.log("end");
+                var a = contact.GetFixtureA().GetBody();
+                var b  = contact.GetFixtureB().GetBody();
+                a.SetAngularVelocity(0);
+                b.SetAngularVelocity(0);
+              /*  var angle = Math.atan(a.GetLinearVelocity().y/a.GetLinearVelocity().x);
+                a.SetAngle(angle);
+                angle = Math.atan(b.GetLinearVelocity().y/b.GetLinearVelocity().x);
+                b.SetAngle(angle);*/
+               // console.log(contact.GetFixtureA().GetBody());
+
+            }
+            world.SetContactListener(listener);
+
             window.scene = scene;
 
             /* Game Loop */
@@ -247,15 +267,24 @@
 
         function addEnemies(container,scene,level){
             for(var i=0;i<1*level;i++){
-                // var t = new Bullet(0,Math.random()*500).createBody(world);
-                var t = new Fish(0, Math.random()*500).createBody(world);
+                // var t = new Bullet(0,Math.random()*500).createBody(world);s
+                var x, y;
+                if(Math.random()>0.5){
+                y = Math.random()>0.5? 1: scene.height-100;
+                x = Math.random()*scene.width;
+                }else{
+                x = Math.random()>0.5? 1: scene.width-100;
+                y = Math.random()*scene.height;
+                }
+                var t = new Fish(x, y).createBody(world);
                 enemy.push(t);
 
                 window.t = t;
                 enemyContainer.addChild(t);
                 //Set the direction of the bullets here
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
-                t.setVelocity(hero.x-t.x,hero.y-t.y,2);
+
+                t.setVelocity(hero.x,hero.y,10);
                 window.t=t;
                 t.addListener({
                     actorLifeCycleEvent : function(actor, event, time) {
