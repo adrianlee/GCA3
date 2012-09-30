@@ -13,7 +13,7 @@ nmorrill2@gmail.com
 NAIT
 
 Ray Guirguess
-rayguirguess@yahoo.com
+rayguirguess@yahoo.com / rayguirguessmusic@gmail.com
 York University
 
 Instructions & How To
@@ -26,4 +26,4 @@ As you advance through the levels, you have to overcome more obstacles, also mor
 
 You only have three lives.
 
-At the game over screen, touch the start button to try again, or exit to leave the application.
+At the game over screen, touch the start button to try again, or press the home button at any time to leave the application.
