@@ -45,7 +45,9 @@ Bullet.prototype = {
 
     move: function(){
         // console.log(this);
-       // this.worldBody.SetAngle(theta+(tx-0.5)*Math.PI);
+        var v = this.worldBody.GetLinearVelocity();
+        var theta = Math.atan((v.y)/(v.x));
+        this.worldBody.SetAngle(theta+(0.5)*Math.PI);
         this.worldBody.SetAngularVelocity(0);
     }
 };
