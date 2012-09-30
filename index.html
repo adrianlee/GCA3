@@ -116,7 +116,9 @@
                     { id:'back1', url:'Image/Background/Tiled_Background.png'},
                     { id:'ghost', url:'Image/Units/Ghost.png'},
                     { id:'heart', url:'Image/Interface/Heart.png'},
-                    { id:'start', url:'Image/Interface/Start.png'}
+                    { id:'start', url:'Image/Interface/Start.png'},
+                    { id:'menu', url:'Image/Background/Splash_Black.png'},
+                    { id:'game_over', url:'Image/Background/Game Over.png'}
                 ],
                 function( count, images ) {
                     if (count === images.length) {
@@ -146,20 +148,39 @@
             subjs.setBackgroundImage(director.getImage('joystick'));
 
             var scene = director.createScene();
-            scene.setBounds(0,0,800,500);
+            scene.setBounds(0,0,director.width,director.height);
             scene.setFillStyle('#000');
             var scene2 = director.createScene();
-            scene2.setBounds(0,0,800,500);
+            scene2.setBounds(0,0,director.width,director.height);
+            var scene3 = director.createScene().setBounds(0,0,director.width,director.height);
             director.setScene(0);
            __menu(director,scene2);
+           __deadScreen(director,scene3);
             __start(director,scene);
-            director.setScene(1);
+            director.setScene(0);
             CAAT.loop(60);
 
 
         }
+        function __deadScreen(director,scene){
+            scene.addChild(new CAAT.Actor().setBounds(0,0,scene.width,scene.height).setBackgroundImage(director.getImage('game_over')).setBackgroundImageOffset(-15,0));
+            scene.setFillStyle('#fff');
+            __deadScreen.prototype.text = new CAAT.TextActor().calcTextSize(director).setFont('50px BM harry').setAlpha(1.0);
+            __deadScreen.prototype.text.setLocation(scene.width/2-200,scene.height/2+100);
+            __deadScreen.prototype.text.textFillStyle = '#000';
+            scene.addChild(__deadScreen.prototype.text);
+            var button = new CAAT.Actor();
+            button.setAsButton(director.getImage('start'),0,0,0,0,function(){
+                director.setScene(0);
+            }).setBounds(scene.width/2-100,scene.height/2+30,200,48);
+
+
+            scene.addChild(button);
+
+        }
         function __menu(director,scene){
             scene.setFillStyle('#fff');
+            scene.addChild(new CAAT.Actor().setBounds(0,0,scene.width,scene.height).setBackgroundImage(director.getImage('menu')));
             var button = new CAAT.Actor();
             button.setAsButton(director.getImage('start'),0,0,0,0,function(){
                 director.setScene(0);
@@ -173,7 +194,6 @@
             text = new CAAT.TextActor().calcTextSize(director).setFont('100px BM harry').setAlpha(1.0);
             text.setLocation(scene.width/2-150,scene.height/2-100);
             scene.addChild(text);
-            window.t= text;
            // scene.setBackgroundImage(director.getImage('back1'));
             scene.cacheAsBitmap();
             world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
@@ -374,7 +394,7 @@
                             enemy.push(t);
                             enemyContainer.addChild(t);
 
-                            t.setVelocity(hero.x-x,hero.y-y,1);
+                            t.setVelocity(hero.x-x,hero.y-y,7);
                             t.setFrameTime( scene.time, t.lifespan );
 
                             console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime+ " "+clevel);
@@ -584,8 +604,8 @@
             scene.removeChild(healthBar);  
             healthBar = new HealthBar(200,450,hero.lives);  
             scene.addChild(healthBar);        
-
-            director.setScene(1);
+            __deadScreen.prototype.text.setText("Your score: "+scene.time);
+            director.setScene(2);
         }
     })();
 </script>
