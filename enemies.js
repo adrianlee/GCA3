@@ -160,6 +160,7 @@ function Ghost(x,y){
 
     Ghost.superclass.constructor.call(this,x,y);
     this.setAlpha(0.20);
+    this.cacheAsBitmap();
     this.homeFactor = 500;
 }
 
@@ -167,6 +168,7 @@ extend(Ghost,Knight);
 
 function DumbGhost(x,y){
     DumbGhost.superclass.constructor.call(this,x,y);
+    this.cacheAsBitmap();
     this.setAlpha(0.15);
 }
 DumbGhost.prototype.move = function(x,y){

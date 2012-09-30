@@ -69,29 +69,26 @@
 
                     // this.joy_x = e.changedTouches[i].pageX - this.width/2;
                     // this.joy_y = e.changedTouches[i].pageY - this.height/2;
+                    hero.setVelocity((touch.pageX-hero.x-hero.width/2)^2/10, (touch.pageY-hero.y-hero.height/2)^2/10, 3);
                 }
             };
 
         joystick.touchMove= function( e ) {
             console.log("touchmove");
             for( var i=0; i < e.changedTouches.length; i++ ) {
+                var touch= e.changedTouches[i];
 
-                // var child = this.childrenList[0];
-
-                // e.point.x < subjsSize-5 ? e.point.x = subjsSize-5 : e.point.x;
-                // e.point.x > joystickSize-subjsSize+5 ? e.point.x = joystickSize-subjsSize+5 : e.point.x;
-                // e.point.y < subjsSize-5 ? e.point.y = subjsSize-5 : e.point.y;
-                // e.point.y > joystickSize-subjsSize+5 ? e.point.y = joystickSize-subjsSize+5 : e.point.y;
-
-
-                console.log("point: " + e.point.x + ", " + e.point.y);
                 console.log("page: " + e.changedTouches[i].pageX + ", " + e.changedTouches[i].pageY);
 
 
                 // var actor = cc.findActorById(e.changedTouches[i].identifier);
                 // actor.setLocation(e.changedTouches[i].pageX-W/2, e.changedTouches[i].pageY-H/2);
                 // child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
-                hero
+
+                // hero.setVelocity(touch.pageX-this.width/2, touch.pageY-this.height/2, 20);
+                hero.setVelocity((touch.pageX-hero.x-hero.width/2)^2/10, (touch.pageY-hero.y-hero.height/2)^2/10, 3);
+                // hero.setVelocity((e.point.x-hero.x-hero.width/2)^2/10, (e.point.y-hero.y-hero.height/2)^2/10, 3);
+
                 // this.joy_x = e.changedTouches[i].pageX - this.width/2;
                 // this.joy_y = e.changedTouches[i].pageY - this.height/2;
             }
@@ -122,17 +119,19 @@
             //     child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
             //     // child.moveTo(e.point.x - child.width/2, e.point.y - child.height/2, 5);
 
-                this.joy_x = e.point.x - this.width/2;
-                this.joy_y = e.point.y - this.height/2;
+                // this.joy_x = e.point.x - this.width/2;
+                // this.joy_y = e.point.y - this.height/2;
+                window.hero = hero;
+                hero.setVelocity((e.point.x-hero.x-hero.width/2)^2/10, (e.point.y-hero.y-hero.height/2)^2/10, 5);
             };
 
         joystick.mouseExit = function(e){
-            if((e.point.x<0 || e.point.x>800) ||(e.point.y<0 ||e.point.y>500) ){
-                this.joy_x = 0;
-                this.joy_y = 0;
-                // var child = this.childrenList[0];
-                // child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
-            }
+            // if((e.point.x<0 || e.point.x>800) ||(e.point.y<0 ||e.point.y>500) ){
+            //     this.joy_x = 0;
+            //     this.joy_y = 0;
+            //     // var child = this.childrenList[0];
+            //     // child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
+            // }
         }
     }
 
@@ -202,8 +201,8 @@
         scene2.setBounds(0,0,director.width,director.height);
         var scene3 = director.createScene().setBounds(0,0,director.width,director.height);
         director.setScene(0);
-       __menu(director,scene2);
-       __deadScreen(director,scene3);
+        __menu(director,scene2);
+        __deadScreen(director,scene3);
         __start(director,scene);
         director.setScene(1);
         CAAT.loop(60);
@@ -263,7 +262,7 @@
         __startLevel(director, scene, 1);
         joystickE ? scene.addChildAt(joystick,1000) : null;
 
-        __setKeys( scene, hero );
+        // __setKeys( scene, hero );
 
 
         var listener = new Box2D.Dynamics.b2ContactListener;
@@ -287,12 +286,13 @@
             };
 
         scene.onRenderEnd =  function(time)    {
+            hero.worldBody.SetLinearVelocity(new Box2D.Common.Math.b2Vec2(0.001,0.001));
             healthBar.hearts(hero.lives);
             world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
-                text.setText("Level "+(level+2));
+                text.setText("Level " + (level+2));
                 text.setAlpha(1.0);
-                console.log("Level: " +(level+2));
+                console.log("Level: " + (level+2));
                 __nextLevel(this,level);
                 level++;
                 levelpause = true;
@@ -323,7 +323,6 @@
 
                             var nx= hero.x + joystick.joy_x*(ttime/2100)*6;
                             var ny= hero.y + joystick.joy_y*(ttime/2100)*6;
-
 
                         /**
                          * Test map collision: hero vs map.
