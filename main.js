@@ -67,9 +67,9 @@
 
                     // child.setLocation( e.point.x - child.width/2, e.point.y - child.height/2);
 
-                    // this.joy_x = e.changedTouches[i].pageX - this.width/2;
-                    // this.joy_y = e.changedTouches[i].pageY - this.height/2;
-                    hero.setVelocity((touch.pageX-hero.x-hero.width/2)^2/10, (touch.pageY-hero.y-hero.height/2)^2/10, 3);
+
+                    this.joy_x = e.changedTouches[i].pageX - hero.x;
+                    this.joy_y = e.changedTouches[i].pageY - hero.y;
                 }
             };
 
@@ -77,20 +77,13 @@
             console.log("touchmove");
             for( var i=0; i < e.changedTouches.length; i++ ) {
                 var touch= e.changedTouches[i];
-
-                console.log("page: " + e.changedTouches[i].pageX + ", " + e.changedTouches[i].pageY);
-
-
+                // var child = this.childrenList[0];
                 // var actor = cc.findActorById(e.changedTouches[i].identifier);
                 // actor.setLocation(e.changedTouches[i].pageX-W/2, e.changedTouches[i].pageY-H/2);
                 // child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
 
-                // hero.setVelocity(touch.pageX-this.width/2, touch.pageY-this.height/2, 20);
-                hero.setVelocity((touch.pageX-hero.x-hero.width/2)^2/10, (touch.pageY-hero.y-hero.height/2)^2/10, 3);
-                // hero.setVelocity((e.point.x-hero.x-hero.width/2)^2/10, (e.point.y-hero.y-hero.height/2)^2/10, 3);
-
-                // this.joy_x = e.changedTouches[i].pageX - this.width/2;
-                // this.joy_y = e.changedTouches[i].pageY - this.height/2;
+                this.joy_x = e.changedTouches[i].pageX - hero.x;
+                this.joy_y = e.changedTouches[i].pageY - hero.y;
             }
         };
 
@@ -118,11 +111,8 @@
             //     window.c = child;
             //     child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
             //     // child.moveTo(e.point.x - child.width/2, e.point.y - child.height/2, 5);
-
-                // this.joy_x = e.point.x - this.width/2;
-                // this.joy_y = e.point.y - this.height/2;
-                window.hero = hero;
-                hero.setVelocity((e.point.x-hero.x-hero.width/2)^2/10, (e.point.y-hero.y-hero.height/2)^2/10, 5);
+                this.joy_x = e.point.x - hero.x - hero.width/2;
+                this.joy_y = e.point.y - hero.y - hero.height/2;
             };
 
         joystick.mouseExit = function(e){
@@ -294,21 +284,16 @@
             };
 
         scene.onRenderEnd =  function(time)    {
-            hero.worldBody.SetLinearVelocity(new Box2D.Common.Math.b2Vec2(0.001,0.001));
+            joystick.joy_x = joystick.joy_x *.9;
+            joystick.joy_y = joystick.joy_y *.9;
+            console.log(hero.lives);
             healthBar.hearts(hero.lives);
             world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
                 text.setText("Level " + (level+2));
                 text.setAlpha(1.0);
-<<<<<<< HEAD
-                console.log("Level: " + (level+2));
-                __nextLevel(this,level);
-=======
-
                 console.log("Level: " + (level+2));
                 __nextLevel(director, this,level);
-
->>>>>>> a65e403478ae5b6b7938b5871934498cbb4fdd0e
                 level++;
                 levelpause = true;
             }else{
@@ -594,7 +579,7 @@
                 if ( collide.length >0 ) {
                     console.log("collision");
                     // collision with enemies.
-                    
+
                     __cleanUp(director,scene);
 
                 }
@@ -643,7 +628,7 @@
         if(hero.die()){
             // kill music
             director.endSound();
-            director.audioPlay("death");    
+            director.audioPlay("death");
             console.log("You have "+hero.lives+" remaining");
             console.log(enemyContainer.childrenList.length);
             enemyContainer.destroy();
