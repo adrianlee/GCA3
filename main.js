@@ -284,6 +284,8 @@
             };
 
         scene.onRenderEnd =  function(time)    {
+            console.log(hero.lives);
+            healthBar.hearts(hero.lives);
             world.DrawDebugData();
             if(enemyContainer.childrenList.length==0 && !levelpause){
                 text.setText("Level "+level);
@@ -317,29 +319,30 @@
                 if ( -1!=prevTime ) {
                     ttime-= prevTime;
 
-                            var nx = selected.x + joystick.joy_x*(ttime/2100)*10;
-                            var ny = selected.y + joystick.joy_y*(ttime/2100)*10;
+                            var nx= hero.x + joystick.joy_x*(ttime/1100)*10;
+                            var ny= hero.y + joystick.joy_y*(ttime/1100)*10;
+
 
                         /**
                          * Test map collision: hero vs map.
                          */
 
-                        var collides = collision.getOverlappingActors(new CAAT.Rectangle().setBounds(nx, ny, selected.width, selected.height));
+                        var collides = collision.getOverlappingActors(new CAAT.Rectangle().setBounds(nx, ny, hero.width, hero.height));
 
                         if (!collides.length) {
-                            selected.setLocation( nx, ny );
+                            hero.setLocation( nx, ny );
                         } else {
 
                             // Allow frictionless surface when collision with wall.
-                            if (wallThickness >= ny || ny + selected.height >= scene.height-wallThickness) {
+                            if (wallThickness >= ny || ny + hero.height >= scene.height-wallThickness) {
                                 // Top & Bottom
-                                if (!(nx < wallThickness) && !(nx + selected.width > scene.width - wallThickness)) {
-                                    selected.setLocation( nx, selected.y );
+                                if (!(nx < wallThickness) && !(nx + hero.width > scene.width - wallThickness)) {
+                                    hero.setLocation( nx, hero.y );
                                 }
-                            } else if (wallThickness >= nx || nx + selected.width >= scene.width-wallThickness) {
+                            } else if (wallThickness >= nx || nx + hero.width >= scene.width-wallThickness) {
                                 // Left & Right Walls
-                                if (!(ny < wallThickness) && !(ny + selected.height > scene.height - wallThickness)) {
-                                    selected.setLocation( selected.x, ny );
+                                if (!(ny < wallThickness) && !(ny + hero.height > scene.height - wallThickness)) {
+                                    hero.setLocation( hero.x, ny );
                                 }
                             }
                         }
@@ -356,7 +359,7 @@
     function addPowerUp(director, scene, item) {
         var obj;
 
-        for (var i = 0; i < 2; i++) {
+        for (var i = 1; i < Math.random()+0.1; i++) {
             obj = new PowerUp(i);
 
             powerup.push(obj);
@@ -557,7 +560,7 @@
 
         // add container to scene
         scene.addChild(enemyContainer,1);
-        //scene.addChild(powerUpContainer);
+        scene.addChild(powerUpContainer);
 
 
         // collision detectiob, enemy
@@ -565,7 +568,7 @@
         scene.createTimer( scene.time, Number.MAX_VALUE, null,
             function(time, ttime, timerTask) {
 
-                var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
+                var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemyContainer.childrenList  );
                 var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero.y+1, hero.width+1, hero.height+1) );
                 // console.log(collide);
 
@@ -591,10 +594,14 @@
                 //     console.log(powerUpContainer[i]);
                 // }
                 if ( collide.length ) {
+                    collide[0].pickup(hero);
+                    powerUpContainer.removeChild(collide[0]);
+                    powerup.removeByValue(collide[0]);
+                    collide[0].destroy();
+                    console.log(hero.lives);
                     // collision with power ups.
                     director.audioPlay("audio_2");
-                    console.log("powerup!");
-                    console.log(collide[0].pickup());
+
                 }
             },
         null);
@@ -626,7 +633,6 @@
 
             // Randomly generate enemies based on level, addChild to container
             addPowerUp(director, scene);
-            healthBar.minusHeart();
             // add container to scene
             scene.addChild(enemyContainer);
             scene.addChild(powerUpContainer);
@@ -654,9 +660,14 @@
         scene.removeChild(joystick);
         scene.addChild(joystick);
         scene.removeChild(healthBar);
+        scene.removeChild(hero);
+        hero =new Player(scene.width/2,scene.height/2).createBody(world);
+        scene.addChild(hero);
+       // __setKeys( scene, hero );
         healthBar = new HealthBar(200,450,hero.lives);
         scene.addChild(healthBar);
         __deadScreen.prototype.text.setText("Your score: "+scene.time);
+        level = -1;
         director.setScene(2);
     }
 

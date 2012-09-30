@@ -6,9 +6,19 @@ function HealthBar(x,y,lives){
   }
   this.setBounds(x,y,500,50);
 }
-HealthBar.prototype.minusHeart = function(){
-  this.childrenList.pop().destroy();
-  return this;
+HealthBar.prototype.hearts = function(heroHearts){
+  console.log(this.childrenList.length);
+  if(heroHearts>this.childrenList.length){
+    for(var i=0;i<heroHearts-this.childrenList.length;i++){
+      this.addChild(new Heart(50*(i+heroHearts-1),0));
+    }
+  }else if(heroHearts<this.childrenList.length){
+    console.log(this.childrenList);
+    for(var i=0;i<this.childrenList.length-heroHearts;i++){
+      this.childrenList.pop().destroy();
+    }
+  }
+
 };
 extend(HealthBar,CAAT.ActorContainer);
 function Heart(x,y){

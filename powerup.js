@@ -1,19 +1,10 @@
 function PowerUp(item) {
     PowerUp.superclass.constructor.call(this);
     this.item = item;
-
-    switch (item) {
-        case 0:
             img = this.bomb;
             this.setScale(0.7, 0.7);
-            break;
-        case 1:
-            img = this.mushroom;
-            this.setScale(0.6, 0.6);
-            break;
-        default:
-            img = this.bomb;
-    }
+ 
+    
 
     this.setBackgroundImage( img, true );
 
@@ -41,17 +32,14 @@ function PowerUp(item) {
 }
 
 PowerUp.prototype = {
-    pickup: function() {
-        console.log("You've got an item!");
-        this.disappear();
+    pickup: function(hero) {
+                console.log(hero.lives);
+        hero.lives++;
+        return this;
+
     },
 
-    disappear: function() {
-        console.log("Item disappeared");
-        this.setVisible(false);
-        this.enableEvents(false);
-        window.powerup.removeByValue(this);
-    }
+
 };
 
 extend(PowerUp, CAAT.Actor)
