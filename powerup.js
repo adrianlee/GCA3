@@ -1,4 +1,4 @@
-function PowerUp(x, y, item) {
+function PowerUp(item) {
     PowerUp.superclass.constructor.call(this);
     this.item = item;
 
@@ -16,7 +16,9 @@ function PowerUp(x, y, item) {
     }
 
     this.setBackgroundImage( img, true );
-    this.setLocation(x, y);
+
+    // set random position, 50px padding.
+    this.setLocation(50+Math.random()*700, 50+Math.random()*400);
 
     // console.log(window.scene);
     // window.scene.createTimer(

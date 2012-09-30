@@ -269,7 +269,7 @@
             var obj;
 
             for (var i = 0; i < 2; i++) {
-                obj = new PowerUp(50+Math.random()*700, 50+Math.random()*400, i);
+                obj = new PowerUp(i);
 
                 powerup.push(obj);
                 powerUpContainer.addChild(obj);
@@ -306,6 +306,7 @@
                             var body = actor.worldBody;
                             world.DestroyBody(body);
                             actor.destroy();
+                            enemy.removeByValue(actor);
                         }
                     }
                 });
