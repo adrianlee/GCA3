@@ -26,7 +26,7 @@
 <audio src='sound/music.mp3' preload='auto' id='music_1'></audio>
 
 <img src='Image/Units/BadGuy.png' preload='auto' id='sprite_1'></img>
-<img src='Image/Units/Fish.png' preload='auto' id='sprite_2'></img>
+<img src='Image/Projectiles/Random_Projectile2.png' preload='auto' id='sprite_1'></img>
 
 <script>
     (function() {
@@ -96,7 +96,8 @@
         function __preload() {
             new CAAT.ImagePreloader().loadImages(
                 [
-                    { id:'bomb', url:'Image/powerups/bomb.png'}
+                    { id:'bomb', url:'Image/powerups/bomb.png'},
+                    { id:'bullet', url:'Image/Projectiles/Random_Projectile2.png'}
                 ],
                 function( count, images ) {
 
@@ -121,7 +122,7 @@
                 addAudio("music_1", document.getElementById('music_1'));
 
             director.setImagesCache(images);
-
+            Bullet.prototype.image = director.getImage('bullet');
             // Create Scene
             var scene = director.createScene();
             scene.setFillStyle( '#000' );
@@ -277,7 +278,7 @@
                 y = Math.random()*scene.height;
                 }
 
-                var t = new Knight(x, y).createBody(world);
+                var t = new Bullet(x, y).createBody(world);
 
                 enemy.push(t);
 
@@ -298,7 +299,7 @@
                         }
                     }
                 });
-                t.setFrameTime( scene.time, 7500 );
+                t.setFrameTime( scene.time, 1000 );
             }
         }
 
