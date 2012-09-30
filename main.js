@@ -233,6 +233,8 @@
         button.touchStart = function( e ) {
             director.setScene(0);
         };
+        
+
         button.setAsButton(director.getImage('start'),0,0,0,0,function(){
             director.setScene(0);
         }).setBounds(scene.width/2-100,scene.height/2-24,200,48);
@@ -675,6 +677,7 @@
         __deadScreen.prototype.text.setText("Your level: "+(level+2));
         level = -1;
         director.setScene(2);
+        director.audioPlay("menuscreen");
     }
 
     window.addEventListener('load', __preload, false);
