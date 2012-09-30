@@ -70,22 +70,13 @@ function Fish(x, y) {
         return params;
     }
 
-    function setVelocity(x,y,speed){
-        var theta = Math.atan(y/x);
-        this.worldBody.SetLinearVelocity(
-            new Box2D.Common.Math.b2Vec2(
-                speed*Math.cos(x),
-                speed*Math.sin(y) ));
-        this.worldBody.SetAngle(theta-Math.PI/2);
-        return this;
-    }
 
     this.setBackgroundImage( new CAAT.SpriteImage().initialize(document.getElementById('sprite_1'), 1, 1), true );
     this.setAnimationImageIndex( [0,1,2,1] );
 
 
     // this.createBody = createBody;
-    this.setVelocity = setVelocity;
+  //  this.setVelocity = setVelocity;
     this.params = getParams();
     return this;
 };
@@ -99,7 +90,20 @@ Fish.prototype = {
 
     move: function(){
   
+    },
+    setVelocity: function(x,y,speed){
+        console.log(this.params.x+" "+this.params.y);
+        var tx = x>this.params.x? 0:1;
+        var theta = Math.atan((y-this.params.y)/(x-this.params.x));
+        this.worldBody.SetLinearVelocity(
+            new Box2D.Common.Math.b2Vec2(
+                speed*Math.cos(tx*Math.PI+theta),
+                speed*Math.sin(tx*Math.PI+theta) ));
+        console.log(theta);
+         this.worldBody.SetAngle(theta+(tx-0.5)*Math.PI);
+        return this;
     }
+
 };
 extend(Fish, CAAT.B2DPolygonBody);
 
