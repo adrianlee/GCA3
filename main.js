@@ -539,6 +539,7 @@
             var timeline = __generateLevel();
 
             //play music
+            director.endSound();
             director.audioPlay("level1");
 
             // spawn enemies

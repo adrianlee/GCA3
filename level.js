@@ -55,8 +55,8 @@ var level4 = {
             interporlation: 0
         },
         {
-            type: 2,
-            amount: 2,
+            type: 1,
+            amount: 1,
             interpolation: 0
         }
     ],
