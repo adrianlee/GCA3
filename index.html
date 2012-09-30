@@ -116,7 +116,6 @@
         }
 
         function __start(images) {
-
             var director = new CAAT.Director().
                     initialize( 800,500, document.getElementById('experiment-canvas') ).
                     setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
@@ -316,16 +315,41 @@
             }
         }
 
+        function __generateLevel() {
+            var parseLevel,
+                parseEnemy,
+                levelJSONLength = levelJSON.length;
+
+            // use level in JSON or modulus of json length.
+            // levelJSON[level] ? parseLevel = levelJSON[level]  : levelJSON[level%levelJSONLength];
+            parseLevel = levelJSON[level%levelJSONLength];
+
+            console.log(parseLevel.enemy);
+
+            // calculate interpolation
+            for (var o=0; o < parseLevel.enemy.length;o++) {
+                parseEnemy = parseLevel.enemy[o];
+                for (obj in parseEnemy) {
+                    console.log(obj + " " + parseEnemy[obj]);
+                }
+            }
+
+            // generate spawn times
+            console.log("spawn");
+        }
+
         function __nextLevel(level){
             scene.createTimer(scene.time+3000,1,function(time,ttime,timerTask){
                 // empty array
                 enemy.length = 0;
                 powerup.length = 0;
 
+                __generateLevel();
+
                 // spawn enemies
                 addEnemies(enemyContainer,scene,level);
                 this.cancel();
-            },null,null);
+            }, null, null);
 
         }
 
