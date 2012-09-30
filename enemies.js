@@ -97,8 +97,9 @@ Knight.prototype = {
     },
 
     move: function(x,y){
-        var vec = new Box2D.Common.Math.b2Vec2(x-this.x/10,y-this.y/10);
-        this.worldBody.ApplyForce(vec,this.worldBody.GetWorldCenter());
+        var vel = this.worldBody.GetLinearVelocity();
+        
+        this.setVelocity(vel.x+(x-this.x)/10,vel.y+(y-this.y)/10,5);
     },
 
     setVelocity: function(x,y,speed){

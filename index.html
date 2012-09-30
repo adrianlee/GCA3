@@ -187,7 +187,7 @@
                     levelpause = true;
                 }else{
                     for(var i=0;i<enemyContainer.childrenList.length;i++){
-                        enemyContainer.childrenList[i].move();
+                        enemyContainer.childrenList[i].move(hero.x,hero.y);
                     levelpause = false;
                     }
                 }
