@@ -37,12 +37,12 @@ var sample2 = {
     enemy: [
         {
             type: 0,
-            amount: 3,
+            amount: 5,
             interporlation: 0
         },
         {
             type: 1,
-            amount: 8,
+            amount: 1,
             interpolation: 0
         }
     ]

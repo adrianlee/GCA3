@@ -1,7 +1,7 @@
 (function() {
-    CAAT.DEBUG = 1;
+    //CAAT.DEBUG = 1;
 
-    window.addEventListener('load', __preload, false);
+    CAAT.TOUCH_BEHAVIOR = CAAT.TOUCH_AS_MULTITOUCH;
 
     window.enemy = [];
     window.powerup = [];
@@ -17,7 +17,7 @@
     var world;
     var wallThickness = 5;
     var text;
-    var level=1;
+    var level=-1;
     var currentLevel;
     var levelDuration = window.levelDuration = 10000;
 
@@ -27,62 +27,118 @@
 
     if (joystickE) {
         var joystick = new CAAT.ActorContainer().
-            setBounds(30,320,joystickSize,joystickSize).
-            setAlpha(0.32).
+            setId(99).
+            setBounds(0,0,800,500).
+            setAlpha(0).
             setFillStyle('#00ffff').
             cacheAsBitmap();
 
-        var subjsSize = joystickSize/5;
-        var subjs = new CAAT.Actor().
-            //setShape( CAAT.ShapeActor.prototype.SHAPE_CIRCLE ).
-            setBounds(joystickSize/2-subjsSize/2,joystickSize/2-subjsSize/2,subjsSize,subjsSize).
-            setFillStyle('#ffff00').
-            cacheAsBitmap().
-            setSize(40, 40).
-            setAlpha(.32).
-            setScale(0.7, 0.7);
+        // var subjsSize = joystickSize/5;
+        // var subjs = new CAAT.Actor().
+        //     //setShape( CAAT.ShapeActor.prototype.SHAPE_CIRCLE ).
+        //     setBounds(joystickSize/2-subjsSize/2,joystickSize/2-subjsSize/2,subjsSize,subjsSize).
+        //     setFillStyle('#ffff00').
+        //     cacheAsBitmap().
+        //     setSize(40, 40).
+        //     setAlpha(.32).
+        //     setScale(0.7, 0.7);
 
-        joystick.addChild(subjs);
+        // joystick.addChild(subjs);
+
+        joystick.touchStart= function( e ) {
+            console.log("touchstart");
+            for( var i=0; i< e.changedTouches.length; i++ ) {
+                    var touch= e.changedTouches[i];
+                    var id= touch.identifier;
+                    // var actor= new CAAT.Actor().
+                    //         setBackgroundImage( img ).
+                    //         enableEvents(false).
+                    //         setGestureEnabled(false).
+                    //         setId( id ).
+                    // var child = this.childrenList[0];
+
+                    // e.point.x < subjsSize-5 ? e.point.x = subjsSize-5 : e.point.x;
+                    // e.point.x > joystickSize-subjsSize+5 ? e.point.x = joystickSize-subjsSize+5 : e.point.x;
+                    // e.point.y < subjsSize-5 ? e.point.y = subjsSize-5 : e.point.y;
+                    // e.point.y > joystickSize-subjsSize+5 ? e.point.y = joystickSize-subjsSize+5 : e.point.y;
+
+                    // console.log("point: " + e.point.x + ", " + e.point.y);
+                    // console.log("page: " + touch.pageX + ", " + touch.pageY);
+
+                    // child.setLocation( e.point.x - child.width/2, e.point.y - child.height/2);
+
+                    this.joy_x = e.changedTouches[i].pageX - this.width/2;
+                    this.joy_y = e.changedTouches[i].pageY - this.height/2;
+                }
+            };
+
+        joystick.touchMove= function( e ) {
+            console.log("touchmove");
+            for( var i=0; i < e.changedTouches.length; i++ ) {
+
+                // var child = this.childrenList[0];
+
+                // e.point.x < subjsSize-5 ? e.point.x = subjsSize-5 : e.point.x;
+                // e.point.x > joystickSize-subjsSize+5 ? e.point.x = joystickSize-subjsSize+5 : e.point.x;
+                // e.point.y < subjsSize-5 ? e.point.y = subjsSize-5 : e.point.y;
+                // e.point.y > joystickSize-subjsSize+5 ? e.point.y = joystickSize-subjsSize+5 : e.point.y;
+
+
+                console.log("point: " + e.point.x + ", " + e.point.y);
+                console.log("page: " + e.changedTouches[i].pageX + ", " + e.changedTouches[i].pageY);
+
+
+                // var actor = cc.findActorById(e.changedTouches[i].identifier);
+                // actor.setLocation(e.changedTouches[i].pageX-W/2, e.changedTouches[i].pageY-H/2);
+                // child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
+
+                this.joy_x = e.changedTouches[i].pageX - this.width/2;
+                this.joy_y = e.changedTouches[i].pageY - this.height/2;
+            }
+        };
+
+        joystick.touchEnd= function( e ) {
+            console.log("touchend");
+            // for( var i=0; i< e.changedTouches.length; i++ ) {
+            //     var actor = cc.findActorById(e.changedTouches[i].identifier);
+            //     actor.destroy();
+            // }
+            this.joy_x = 0;
+            this.joy_y = 0;
+            // var child = this.childrenList[0];
+            // child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
+        };
 
         joystick.mouseMove = function(e){
-            var child = this.childrenList[0];
-                e.point.x < subjsSize-5 ? e.point.x = subjsSize-5 : e.point.x;
-                e.point.x > joystickSize-subjsSize+5 ? e.point.x = joystickSize-subjsSize+5 : e.point.x;
-                e.point.y < subjsSize-5 ? e.point.y = subjsSize-5 : e.point.y;
-                e.point.y > joystickSize-subjsSize+5 ? e.point.y = joystickSize-subjsSize+5 : e.point.y;
-                window.c = child;
-                child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
-                // child.moveTo(e.point.x - child.width/2, e.point.y - child.height/2, 5);
+            // var child = this.childrenList[0];
+            //     e.point.x < subjsSize-5 ? e.point.x = subjsSize-5 : e.point.x;
+            //     e.point.x > joystickSize-subjsSize+5 ? e.point.x = joystickSize-subjsSize+5 : e.point.x;
+            //     e.point.y < subjsSize-5 ? e.point.y = subjsSize-5 : e.point.y;
+            //     e.point.y > joystickSize-subjsSize+5 ? e.point.y = joystickSize-subjsSize+5 : e.point.y;
+            //     window.c = child;
+            //     child.setLocation(e.point.x - child.width/2, e.point.y - child.height/2 );
+            //     // child.moveTo(e.point.x - child.width/2, e.point.y - child.height/2, 5);
 
                 this.joy_x = e.point.x - this.width/2;
                 this.joy_y = e.point.y - this.height/2;
             };
 
         joystick.mouseExit = function(e){
-            if((e.point.x<0 || e.point.x>joystickSize) ||(e.point.y<0 ||e.point.y>joystickSize) ){
+            if((e.point.x<0 || e.point.x>800) ||(e.point.y<0 ||e.point.y>500) ){
                 this.joy_x = 0;
                 this.joy_y = 0;
-                var child = this.childrenList[0];
-                child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
+                // var child = this.childrenList[0];
+                // child.setLocation(this.width/2-child.width/2,this.height/2-child.height/2);
             }
         }
     }
 
     function __preload() {
-        var el = document.createElement('link');
-        el.href = "Image/font/BMHARRY.ttf";
-        el.type = 'text/css';
-        el.rel ='stylesheet';
-        document.head.appendChild(el);
-        var director = new CAAT.Director().
-            initialize( 800,500 ).
-            setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
-        CAAT.currentDirector = director;
-        CAAT.PMR = director.width / 10;
+
         new CAAT.ImagePreloader().loadImages(
             [
                 { id:'bomb', url:'Image/Powerups/bomb.png'},
-                { id:'mushroom', url:'Image/powerups/Mushroom.png'},
+                { id:'mushroom', url:'Image/Powerups/Mushroom.png'},
                 { id:'bullet', url:'Image/Projectiles/Random_Projectile2_Rotated.png'},
                 { id:'joypad', url:'Image/Interface/Outer_Square.png'},
                 { id:'joystick',url:'Image/Interface/Inner_Square50px.png'},
@@ -97,21 +153,35 @@
             ],
             function( count, images ) {
                 if (count === images.length) {
-                    __setup(director,images);
+                    __setup(images);
                 }
             }
         );
+    }
 
-                    // Preload audio and images!
+    function __setup(images){
+
+        // var el = document.createElement('link');
+        // el.href = "Image/font/BMHARRY.TTF";
+        // el.type = "application/octet-stream";
+        // el.rel ='stylesheet';
+        // document.head.appendChild(el);
+
+        var director = new CAAT.Director().
+            initialize( 800,500 ).
+            setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
+
+        CAAT.currentDirector = director;
+        CAAT.PMR = director.width / 10;
+
         director.
             addAudio("death", document.getElementById('death')).
             addAudio("audio_2", document.getElementById('audio_2')).
             addAudio("audio_3", document.getElementById('audio_3')).
             addAudio("music_1", document.getElementById('music_1'));
-    }
 
-    function __setup(director,images){
         director.setImagesCache(images);
+
         PowerUp.prototype.bomb = director.getImage('bomb');
         PowerUp.prototype.mushroom = director.getImage('mushroom');
         Bullet.prototype.image = director.getImage('bullet');
@@ -119,8 +189,8 @@
         Knight.prototype.image = director.getImage('knight');
         Ghost.prototype.image = director.getImage('ghost');
         Heart.prototype.image = director.getImage('heart');
-        joystick.setBackgroundImage(director.getImage('joypad'));
-        subjs.setBackgroundImage(director.getImage('joystick'));
+        // joystick.setBackgroundImage(director.getImage('joypad'));
+        // subjs.setBackgroundImage(director.getImage('joystick'));
 
         var scene = director.createScene();
         scene.setBounds(0,0,director.width,director.height);
@@ -144,6 +214,9 @@
         __deadScreen.prototype.text.textFillStyle = '#000';
         scene.addChild(__deadScreen.prototype.text);
         var button = new CAAT.Actor();
+        button.touchStart = function( e ) {
+            director.setScene(0);
+        };
         button.setAsButton(director.getImage('start'),0,0,0,0,function(){
             director.setScene(0);
         }).setBounds(scene.width/2-100,scene.height/2+30,200,48);
@@ -157,6 +230,9 @@
         scene.setFillStyle('#fff');
         scene.addChild(new CAAT.Actor().setBounds(0,0,scene.width,scene.height).setBackgroundImage(director.getImage('menu')));
         var button = new CAAT.Actor();
+        button.touchStart = function( e ) {
+            director.setScene(0);
+        };
         button.setAsButton(director.getImage('start'),0,0,0,0,function(){
             director.setScene(0);
         }).setBounds(scene.width/2-100,scene.height/2-24,200,48);
@@ -241,8 +317,8 @@
                 if ( -1!=prevTime ) {
                     ttime-= prevTime;
 
-                            var nx= selected.x + joystick.joy_x*(ttime/1100)*10;
-                            var ny= selected.y + joystick.joy_y*(ttime/1100)*10;
+                            var nx = selected.x + joystick.joy_x*(ttime/2100)*10;
+                            var ny = selected.y + joystick.joy_y*(ttime/2100)*10;
 
                         /**
                          * Test map collision: hero vs map.
@@ -398,6 +474,7 @@
         var parseLevel,
             parseEnemy,
             levelJSONLength = levelJSON.length;
+
 
         // use level in JSON or modulus of json length.
         // levelJSON[level] ? parseLevel = levelJSON[level]  : levelJSON[level%levelJSONLength];
@@ -582,4 +659,6 @@
         __deadScreen.prototype.text.setText("Your score: "+scene.time);
         director.setScene(2);
     }
+
+    window.addEventListener('load', __preload, false);
 })();
