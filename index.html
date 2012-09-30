@@ -69,6 +69,7 @@
                 setFillStyle('#ffff00').
                 cacheAsBitmap().
                 setSize(40, 40).
+                setAlpha(.32).
                 setScale(0.7, 0.7);
 
             joystick.addChild(subjs);
@@ -98,6 +99,11 @@
         }
 
         function __preload() {
+            var director = new CAAT.Director().
+                initialize( 800,500, document.getElementById('experiment-canvas') ).
+                setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
+            CAAT.currentDirector = director;
+            CAAT.PMR = director.width / 10;
             new CAAT.ImagePreloader().loadImages(
                 [
                     { id:'bomb', url:'Image/Powerups/bomb.png'},
@@ -106,42 +112,52 @@
                     { id:'joypad', url:'Image/Interface/Outer_Square.png'},
                     { id:'joystick',url:'Image/Interface/Inner_Square50px.png'},
                     { id:'hero', url:'Image/Units/Human.png'},
-                    { id:'back1', url:'Image/Background/Tiled_Background.png'}
+                    { id:'knight', url:'Image/Units/BadGuy.png'},
+                    { id:'back1', url:'Image/Background/Tiled_Background.png'},
+                    { id:'ghost', url:'Image/Units/Ghost.png'}
                 ],
                 function( count, images ) {
                     if (count === images.length) {
-                        __start(images);
+                        __setup(director,images);
                     }
                 }
             );
-        }
 
-        function __start(images) {
-            var director = new CAAT.Director().
-                    initialize( 800,500, document.getElementById('experiment-canvas') ).
-                    setClear( CAAT.Director.CLEAR_DIRTY_RECTS );
-
-            CAAT.currentDirector = director;
-            CAAT.PMR = director.width / 10;
-            // Preload audio and images!
+                        // Preload audio and images!
             director.
                 addAudio("audio_1", document.getElementById('audio_1')).
                 addAudio("audio_2", document.getElementById('audio_2')).
                 addAudio("audio_3", document.getElementById('audio_3')).
                 addAudio("music_1", document.getElementById('music_1'));
+        }
 
+        function __setup(director,images){
             director.setImagesCache(images);
-
             PowerUp.prototype.bomb = director.getImage('bomb');
             PowerUp.prototype.mushroom = director.getImage('mushroom');
             Bullet.prototype.image = director.getImage('bullet');
             Player.prototype.image = director.getImage('hero');
+            Knight.prototype.image = director.getImage('knight');
+            Ghost.prototype.image = director.getImage('ghost');
             joystick.setBackgroundImage(director.getImage('joypad'));
             subjs.setBackgroundImage(director.getImage('joystick'));
-            // Create Scene
+
             var scene = director.createScene();
             scene.setBounds(0,0,800,500);
             scene.setFillStyle('#000');
+            var scene2 = director.createScene();
+            director.setScene(0);
+           // __menu(scene2);
+            __start(director,scene);
+            CAAT.loop(60);
+        }
+        function __menu(scene){
+
+            __start(scene);
+        }
+        function __start(director,scene) {
+
+
            // scene.setBackgroundImage(director.getImage('back1'));
             scene.cacheAsBitmap();
             world = new Box2D.Dynamics.b2World(new Box2D.Common.Math.b2Vec2(0,0), true);
@@ -150,6 +166,7 @@
             __createLevel( director, scene );
             //__createHero( scene ,director.getImage('hero'));
             hero =new Player(scene.width/2,scene.height/2).createBody(world);
+            hero.setFillStyle('#fff');
             scene.addChild(hero);
             __startLevel(director, scene, 1);
             joystickE ? scene.addChild(joystick) : null;
@@ -187,14 +204,14 @@
                     levelpause = true;
                 }else{
                     for(var i=0;i<enemyContainer.childrenList.length;i++){
-                        enemyContainer.childrenList[i].move();
+                        enemyContainer.childrenList[i].move(hero.x,hero.y);
                     levelpause = false;
                     }
                 }
             }
 
 
-            CAAT.loop(60);
+
         }
 
         function __setKeys( scene, selected ) {
@@ -268,7 +285,7 @@
                 y = Math.random()*scene.height;
                 }
 
-                var t = new Bullet(x, y).createBody(world);
+                var t = new Boomer(x, y).createBody(world);
 
                 enemy.push(t);
 
@@ -279,17 +296,10 @@
                 //To use physical formulas use t.worldBody then you can use ApplyForce or ApplyImpulse
 
                 t.setVelocity(hero.x-x,hero.y-y,2);
-                t.addListener({
-                    actorLifeCycleEvent : function(actor, event, time) {
-                        if (event === 'expired') {
-                            var body = actor.worldBody;
-                            world.DestroyBody(body);
-                            actor.destroy();
-                            enemy.removeByValue(actor);
-                        }
-                    }
-                });
-                t.setFrameTime( scene.time, 2000 );
+
+                window.t=t;
+
+                t.setFrameTime( scene.time, t.lifespan );
             }
         }
 
@@ -336,18 +346,7 @@
                             enemyContainer.addChild(t);
 
                             t.setVelocity(hero.x-x,hero.y-y,2);
-
-                            t.addListener({
-                                actorLifeCycleEvent : function(actor, event, time) {
-                                    if (event === 'expired') {
-                                        var body = actor.worldBody;
-                                        world.DestroyBody(body);
-                                        actor.destroy();
-                                        enemy.removeByValue(actor);
-                                    }
-                                }
-                            });
-                            t.setFrameTime( scene.time, 2000 );
+                            t.setFrameTime( scene.time, t.lifespan );
 
                             console.log("spawned enemy type " + enemySpawned.type + " at frame " + ttime);
                             enemySpawned = timeline.shift();
@@ -463,12 +462,11 @@
             scene.createTimer( scene.time, Number.MAX_VALUE, null,
                 function(time, ttime, timerTask) {
                     var entitiesCollision = new CAAT.QuadTree().create( 0,0, scene.width, scene.height, enemy );
-                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x, hero.y, hero.width, hero.height) );
+                    var collide = entitiesCollision.getOverlappingActors( new CAAT.Rectangle().setBounds( hero.x-1, hero+1, hero.width+1, hero.height+1) );
                     // console.log(collide);
-                    for(var i = 0;i<enemyContainer.length;i++){
-                        // enemyContainer[i].setVelocity(0,0);
-                    }
-                    if ( collide.length ) {
+
+                    if ( collide.length >0 ) {
+
                         // collision with enemies.
                         director.audioPlay("audio_1");
                         if (!hero.die()){
@@ -476,7 +474,8 @@
                         }else{
                             console.log('You have '+hero.lives+' lives remaining');
                         }
-                        // enemyContainer.destroy();
+
+
                     }
                 },
             null);
@@ -504,39 +503,6 @@
 
         function __createLevel( director, scene ) {
 
-            // var dx0=                0;
-            // var dy0=                0;
-            // var dx1=                director.width;
-            // var dy1=                director.height;
-
-            // var i;
-
-            // var bounds=[
-            //     dx0,dy0,
-            //     dx1,dy0,
-            //     dx1,dy1,
-            //     dx0,dy1,
-            //     dx0,dy0
-            // ];
-
-            // for( i=0; i<4; i++ ) {
-            //     var actor0 = new CAAT.B2DPolygonBody().createBody(
-            //         world,
-            //         {
-            //             bodyType:   Box2D.Dynamics.b2Body.b2_staticBody,
-            //             density:    1.2,
-            //             friction:   1,
-            //             restitution:1,
-            //             polygonType:CAAT.B2DPolygonBody.Type.EDGE,
-            //             bodyDef:    [
-            //                 {x: bounds[i*2  ],  y: bounds[i*2+1] },
-            //                 {x: bounds[i*2+2],  y: bounds[i*2+3] }
-            //             ],
-            //             userData:   {}
-            //         }
-            //     );
-            //     scene.addChild(actor0);
-            // }
 
             var walls = [];
 
@@ -548,20 +514,16 @@
             collision = new CAAT.QuadTree().create(0, 0, director.width, director.height, walls);
         }
 
-        var createBall = function(world,x,y,data) {
-                return new CAAT.B2DCircularBody().enableEvents(false).createBody(
-                    world,
-                    {
-                        x:                      x,
-                        y:                      y,
-                        bodyType:               Box2D.Dynamics.b2Body.b2_dynamicBody,
-                        radius:                 data.radius,
-                        density:                data.density,
-                        restitution:            data.restitution,
-                        friction:               data.friction,
-                        bodyDefScaleTolerance:  data.tolerance,
-                        userData:               null
-                    });
+        function __cleanUp(){
+            if(hero.die()){
+                enemyContainer.emptyChildren();
+                //start level again
+            }else{
+                __gameOver();
+            }
+        }
+        function __gameOver(){
+
         }
     })();
 </script>
