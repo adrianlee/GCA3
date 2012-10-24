@@ -19,18 +19,22 @@ At the game over screen, touch the start button to try again, or press the home 
 
 Team Members
 ============
+[Dev]
 Adrian Lee
 adrian.lee@mail.mcgill.ca
 McGill University
 
+[Dev]
 Xavier Denis
 xavier.denis@mail.mcgill.ca
 McGill University
 
+[Art]
 Nick Morrill
 nmorrill2@gmail.com
 NAIT
 
+[Music]
 Ray Guirguess
 rayguirguess@yahoo.com / rayguirguessmusic@gmail.com
 York University
